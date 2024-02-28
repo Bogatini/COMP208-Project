@@ -24,7 +24,7 @@ public class MazeSolver {
     };
     public static String[][] MAZE_COPY = MAZE; // printed at the end - just to show trail
 
-    private static final int NUM_EPISODES = 10000; // i chose a random big number - the bigger this number the better the path will be
+    private static final int NUM_EPISODES = 100; // i chose a random big number - the bigger this number the better the path will be
                                                    // 100 is too small, could not complete - 10000 seems to be good for a 10x10 maze
     
     // arbitrary values, can change later
@@ -237,7 +237,7 @@ public class MazeSolver {
             mazeDisplay.updateMaze(MAZE_COPY);
             
             try {
-                Thread.sleep(1000);
+                Thread.sleep(100);
             } catch (InterruptedException e) { 
                 // Restore the interrupted status
                 Thread.currentThread().interrupt();}

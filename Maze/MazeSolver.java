@@ -58,9 +58,9 @@ public class MazeSolver {
 
         MazeCreator mazeCreator = new MazeCreator(END_ROW, END_COL);
 
-        //while (!mazeCreator.getContinueFlag()) {
-        //    System.out.println(mazeCreator.getContinueFlag());
-        //}
+        while (!mazeCreator.getContinueFlag()) {
+            System.out.print(""); // i have no idea why, but just ";" doesnt work
+        }
 
         //MAZE = mazeCreator.getNewMaze();
 

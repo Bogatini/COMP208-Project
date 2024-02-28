@@ -1,4 +1,5 @@
 import java.util.Random; // https://docs.oracle.com/javase/8/docs/api/java/util/Random.html
+import java.lang.*;
 import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,7 +25,7 @@ public class MazeSolver {
     };
     public static String[][] MAZE_COPY = MAZE; // printed at the end - just to show trail
 
-    private static final int NUM_EPISODES = 100; // i chose a random big number - the bigger this number the better the path will be
+    private static final int NUM_EPISODES = 10000; // i chose a random big number - the bigger this number the better the path will be
                                                    // 100 is too small, could not complete - 10000 seems to be good for a 10x10 maze
     
     // arbitrary values, can change later
@@ -136,6 +137,10 @@ public class MazeSolver {
             int currentState = (START_ROW * MAZE[0].length) + START_COL;
             while (currentState != (END_ROW * MAZE[0].length) + END_COL) {
                 int action;
+
+                // i want the actor to prioritise solving the maze as efficiently as possible
+                // maybe increase punishment the more steps it takes?
+
                 
                 // EXPLORATION_RATE determines how often new random actions are chosen
                 if (random.nextDouble() < EXPLORATION_RATE) {
@@ -199,22 +204,18 @@ public class MazeSolver {
         return bestQValue;
     }
 
-    public void solveMaze() {
+    public void solveMaze() throws Exception{
         int currentState = START_ROW * MAZE[0].length + START_COL;
         int count = 0;
-        boolean errorFlag = false;
 
         while (currentState != (END_ROW * MAZE[0].length + END_COL)) {
             count +=1;
 
             //if (count > END_ROW*END_COL) {
             if (count > 100) {
-                System.out.println("shits fucked");
-                errorFlag = true;
-                break;
+                throw new Exception("ERROR: Cannot complete maze");
             }
 
-            //System.out.print("(" + (currentState / MAZE[0].length) + ", " + (currentState % MAZE[0].length) + ") -> ");
             int action = getBestAction(currentState);
 
             // print the most recent action
@@ -226,13 +227,6 @@ public class MazeSolver {
             int newCol = Math.max(0, Math.min(MAZE[0].length - 1, (currentState % MAZE[0].length) + delta[0]));
             int newRow = Math.max(0, Math.min(MAZE.length - 1, (currentState / MAZE[0].length) + delta[1]));
             currentState = newRow * MAZE[0].length + newCol;
-
-            // print out the whole maze with the most recent move made
-            // IMPORTANT NOTE: the decisions have already been made, this is just displaying them one step at a time
-            //for (int i = 0; i< MAZE_COPY.length; i++) {
-            //    System.out.println(Arrays.toString(MAZE_COPY[i]));
-            //}
-            //System.out.print("\n");
 
             mazeDisplay.updateMaze(MAZE_COPY);
             
@@ -254,9 +248,12 @@ public class MazeSolver {
         MazeSolver mazeSolver = new MazeSolver();
 
 
-
-        mazeSolver.solveMaze();
-        
+        try {
+            mazeSolver.solveMaze();
+        }
+        catch (Exception e)  {
+            System.err.println(e.getMessage());
+        }
         
     }
 }

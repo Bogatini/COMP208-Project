@@ -11,16 +11,16 @@ import java.util.Arrays;
 public class MazeSolver {
     
     public static String[][] MAZE = { // final improves testing performance as MAZE can be cached
-        {"█","█","█","█","█","█","█","█","█","█"},
-        {"█"," "," "," "," "," "," "," "," ","█"},
-        {"█","█"," ","█","█","█","█","█"," ","█"},
-        {"█","█"," ","█"," "," "," ","█"," ","█"},
-        {"█","█"," ","█"," "," "," ","█"," ","█"},
-        {"█"," "," ","█"," ","█"," "," "," ","█"},
-        {"█"," "," ","█"," ","█","█","█","█","█"},
-        {"█"," ","█"," "," "," "," "," "," ","█"},
-        {"█"," ","█"," "," "," "," "," "," ","█"},
-        {"█","█","█","█","█","█","█","█","█","█"}
+        {" ","█"," "," "," "," "," "," "," "," "},
+        {" ","█"," ","█"," "," "," ","█"," "," "},
+        {" ","█"," "," ","█"," "," "," "," "," "},
+        {" ","█"," ","█"," ","█"," "," "," "," "},
+        {" ","█"," ","█"," "," "," ","█","█","█"},
+        {" "," "," ","█"," "," "," "," "," "," "},
+        {" ","█"," ","█"," ","█"," "," "," "," "},
+        {" ","█"," ","█"," "," "," "," ","█"," "},
+        {" ","█"," ","█"," "," ","█","█","█"," "},
+        {" "," "," ","█"," "," "," "," "," "," "}
     };
     public static String[][] MAZE_COPY = MAZE; // printed at the end - just to show trail
 
@@ -32,10 +32,10 @@ public class MazeSolver {
     private static final double DISCOUNT_FACTOR = 0.9;
     private static final double EXPLORATION_RATE = 0.1;
 
-    private static final int START_ROW = 1;
-    private static final int START_COL = 1;
-    private static final int END_COL = 8;
-    private static final int END_ROW = 8;
+    private static final int START_ROW = 0;
+    private static final int START_COL = 0;
+    private static final int END_COL = 9;
+    private static final int END_ROW = 9;
     
     // the different directions the actor can go
     // this is a LIE, the actual directions are right, left, up, down
@@ -48,7 +48,7 @@ public class MazeSolver {
     // there is one of these arrays for each position on the maze
     private double[][] qValues;
 
-    private String qValuesFilePath = "C:\\Users\\fmort\\Desktop\\java ML\\qValues.txt";
+    private String qValuesFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\qValues.txt";
 
     MazeDisplay mazeDisplay = new MazeDisplay(MAZE_COPY);
 

@@ -23,7 +23,6 @@ public class MazeSolver {
         {" ","█"," ","█"," "," ","█","█","█"," "},
         {" "," "," ","█"," "," "," "," "," "," "}
     };
-    public static String[][] MAZE_COPY = MAZE; // printed at the end - just to show trail
 
     private static final int NUM_EPISODES = 10000; // i chose a random big number - the bigger this number the better the path will be
                                                    // 100 is too small, could not complete - 10000 seems to be good for a 10x10 maze
@@ -52,7 +51,7 @@ public class MazeSolver {
 
     private String qValuesFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\qValues.txt";
 
-    MazeDisplay mazeDisplay = new MazeDisplay(MAZE_COPY);
+    MazeDisplay mazeDisplay = new MazeDisplay(MAZE);
 
     public MazeSolver() {
         qValues = new double[MAZE.length * MAZE[0].length][NUM_ACTIONS];
@@ -224,14 +223,14 @@ public class MazeSolver {
             // print the most recent action
             //System.out.println(Arrays.toString(ACTION_DELTAS[action]));
             // show the current state
-            MAZE_COPY[currentState / MAZE[0].length][currentState % MAZE[0].length] = "▒";
+            MAZE[currentState / MAZE[0].length][currentState % MAZE[0].length] = "▒";
             
             int[] delta = ACTION_DELTAS[action];
             int newCol = Math.max(0, Math.min(MAZE[0].length - 1, (currentState % MAZE[0].length) + delta[0]));
             int newRow = Math.max(0, Math.min(MAZE.length - 1, (currentState / MAZE[0].length) + delta[1]));
             currentState = newRow * MAZE[0].length + newCol;
 
-            mazeDisplay.updateMaze(MAZE_COPY);
+            mazeDisplay.updateMaze(MAZE);
             
             try {
                 Thread.sleep(100);
@@ -240,8 +239,8 @@ public class MazeSolver {
                 Thread.currentThread().interrupt();}
         }
         //System.out.println("(" + END_ROW + ", " + END_COL + ")"); // this line cheats a bit
-        MAZE_COPY[currentState / MAZE[0].length][currentState % MAZE[0].length] = "▒";
-        mazeDisplay.updateMaze(MAZE_COPY);
+        MAZE[currentState / MAZE[0].length][currentState % MAZE[0].length] = "▒";
+        mazeDisplay.updateMaze(MAZE);
 
         //System.out.println(count+1 + "\n");
         

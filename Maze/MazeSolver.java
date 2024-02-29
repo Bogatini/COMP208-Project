@@ -1,5 +1,5 @@
 import java.util.Random; // https://docs.oracle.com/javase/8/docs/api/java/util/Random.html
-import java.lang.*;
+//import java.lang.*;
 import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -41,6 +41,7 @@ public class MazeSolver {
     // the different directions the actor can go
     // this is a LIE, the actual directions are right, left, up, down
     private static final int[][] ACTION_DELTAS = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}}; // up, down, left, right
+    //private static final int[][] ACTION_DELTAS = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}, {1, 1}, {1, -1}, {-1, -1}, {-1, 1}}; // up, down, left, right + diagonals
 
     private static final int NUM_ACTIONS = ACTION_DELTAS.length;
 
@@ -61,6 +62,8 @@ public class MazeSolver {
         while (!mazeCreator.getContinueFlag()) {
             System.out.print(""); // i have no idea why, but just ";" doesnt work
         }
+
+        
 
         //MAZE = mazeCreator.getNewMaze();
 

@@ -71,6 +71,8 @@ public class MazeCreator extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 continueFlag = true;
                 System.out.println(getContinueFlag());
+                setVisible(false);
+                dispose();
             }
         });
         add(printButton);

@@ -3,15 +3,15 @@ import java.awt.*;
 
 public class MazeDisplay extends JFrame {
 
-    private String[][] maze;
+    private static String[][] MAZE;
 
     public void updateMaze(String[][] maze) {
-        this.maze = maze;
+        this.MAZE = maze;
         repaint(); // Refresh the display
     }
 
     public MazeDisplay(String[][] maze) {
-        this.maze = maze;
+        this.MAZE = maze;
         setTitle("Maze Display");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(maze.length * 50, (maze[0].length+1) * 50);
@@ -28,19 +28,20 @@ public class MazeDisplay extends JFrame {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
 
-            for (int i = 0; i < maze.length; i++) {
-                for (int j = 0; j < maze[i].length; j++) {
-                    if (maze[i][j].equals("█")) {
+            for (int i = 0; i < MAZE.length; i++) {
+                for (int j = 0; j < MAZE[i].length; j++) {
+                    // this uses the old characters left over from when the maze was origionally text based. these can be switched out for any characters BUT MAKE SURE TO UPDATE OTHER FILES ACCORDINGLY
+                    if (MAZE[i][j].equals("█")) {
                         g.setColor(Color.BLACK);
-                        g.fillRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-                    } else if (maze[i][j].equals("▒")) {
+                        g.fillRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE); // place a coloured square at the position of the old buttons. IF BUTTONS CHANGE SIZE, CHANGE CELL_SIZE
+                    } 
+                    else if (MAZE[i][j].equals("▒")) {
                         g.setColor(Color.RED);
                         g.fillRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-                    }else {
+                    }
+                    else {
                         g.setColor(Color.WHITE);
                         g.fillRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-                        g.setColor(Color.BLACK);
-                        g.drawRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
                     }
                 }
             }
@@ -48,7 +49,7 @@ public class MazeDisplay extends JFrame {
 
         @Override
         public Dimension getPreferredSize() {
-            return new Dimension(maze[0].length * CELL_SIZE, maze.length * CELL_SIZE);
+            return new Dimension(MAZE[0].length * CELL_SIZE, MAZE.length * CELL_SIZE);
         }
     }
 }

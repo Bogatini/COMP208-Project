@@ -9,8 +9,6 @@ import java.util.Arrays;
 
 public class MazeSolver {
     
-    public static String[][] MAZE;
-
     private static final int NUM_EPISODES = 10000; // i chose a random big number - the bigger this number the better the path will be
                                                    // 100 is too small, could not complete - 10000 seems to be good for a 10x10 maze
                                                    // or maybe keep it small - demonstrates how the saved q vaules can be used to extend actor's learning
@@ -37,15 +35,19 @@ public class MazeSolver {
     // q values are the expected rewards for an action taken in a given state
     // each item in qValues is list of 4 doubles which hold the q value of each possible action
     // there is one of these arrays for each position on the maze
-    private double[][] qValues;
+    private static double[][] qValues;
 
-    private String qValuesFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\qValues.txt";
+    public static String[][] MAZE;
+
+    // theres a better way of doing this
+    private static final String qValuesFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\qValues.txt";
 
     MazeDisplay mazeDisplay;
 
     public MazeSolver() {
         MazeCreator mazeCreator = new MazeCreator(MAX_ROW+1, MAX_COL+1); // add one because oops MazeCreator uses the exact number of squares on each axis, while MazeSolver uses list positions
 
+        // this whole section sucks - must find a way to pause MazeSolver and wait for MazeCreator to finish
         while (!mazeCreator.getContinueFlag()) {
             try {
                 Thread.sleep(1); // This just pauses the loop for a short duration to avoid consuming CPU resources (is this even true??)
@@ -60,13 +62,12 @@ public class MazeSolver {
         //    System.out.print(""); // i have no idea why, but just ";" doesnt work
         //}
         
-        
-        MAZE = mazeCreator.getNewMaze();
+        MAZE = mazeCreator.getMaze();
 
         mazeDisplay = new MazeDisplay(MAZE);
 
+        // list of every possible state, with a list of qValues for each possible action when in said state
         qValues = new double[MAZE.length * MAZE[0].length][NUM_ACTIONS];
-
 
         // need to pause here and wait for this to finish ^^^^
 
@@ -93,44 +94,47 @@ public class MazeSolver {
     private void getQValues(String fileName) {       
         try {
             File file = new File(fileName);
-            if (file.exists()) { // if there is a file with that name
+            if (file.exists()) { // if there is a file with given name
                 BufferedReader reader = new BufferedReader(new FileReader(fileName));
                 String line;
                 int row = 0;
-                while ((line = reader.readLine()) != null && row < qValues.length) {
+
+                // can definately clean this up - should now just be a nested for loop, not a while and for
+                while ((line = reader.readLine()) != null && row < qValues.length) { // read until the end of the file, or until all qValues have been filled - should probably just choose one
                     String[] values = line.split(", ");
 
-                    for (int column = 0; column < values.length && column < qValues[row].length; column++) {
+                    for (int column = 0; column < values.length; column++) {
                         qValues[row][column] = Double.parseDouble(values[column]);
                     }
                     row++;
                 }
                 reader.close();
             }
-            else {
+            else { // if there is not qValues file, generate random values 
                 initializeQValues();
             }
-        } catch (IOException e) {
+        } catch (IOException e) { // most likely reason this is triggered is a bad path name
             e.printStackTrace();
         }
     }
 
+    // write all qValues to a .txt file of given name
     private void writeQValues(String fileName) {
-        try{
-        File file = new File(fileName);
-        file.createNewFile();
+        try {
+            File file = new File(fileName);
+            file.createNewFile();
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
 
-        for (int i = 0; i < qValues.length; i++) {
-            for (int j = 0; j < qValues[i].length; j++) {
-                writer.write(qValues[i][j] + ", ");
+            for (int i = 0; i < qValues.length; i++) {
+                for (int j = 0; j < qValues[i].length; j++) {
+                    writer.write(qValues[i][j] + ", ");
+                }
+                writer.write("\n");
             }
-            writer.write("\n");
-        }
-
-        writer.close();
-        } catch (IOException e) {
+            writer.close();
+        } 
+        catch (IOException e) {
             e.printStackTrace();
         } 
     }
@@ -152,27 +156,27 @@ public class MazeSolver {
                 } 
                 else action = getBestAction(currentState);
 
-                int[] delta = ACTION_DELTAS[action];
-                
-                int newCol = Math.max(0, Math.min(MAZE.length - 1, (currentState % MAZE[0].length) + delta[0]));
-                int newRow = Math.max(0, Math.min(MAZE[0].length - 1, (currentState / MAZE[0].length) + delta[1]));
+                int[] chosenAction = ACTION_DELTAS[action];
+                int newCol = Math.max(0, Math.min(MAZE[0].length - 1, (currentState % MAZE[0].length) + chosenAction[0]));
+                int newRow = Math.max(0, Math.min(MAZE.length - 1, (currentState / MAZE[0].length) + chosenAction[1]));
                 
                 int newState = (newRow * MAZE[0].length) + newCol;
 
                 double reward;
-                if (MAZE[newRow][newCol].equals("█")) { // if new position is a wall, punish it
+                if (MAZE[newRow][newCol].equals("█")) { // if new position is a wall, punish actor
                     reward = -10000; // may need to reduce this?
                 }
                 else {
-                    reward = 0; // dont punish the computer if the new position is not a wall
+                    reward = 0; // dont punish actor if the new position is not a wall
                 }
 
                 if (newState == (END_ROW * MAZE[0].length) + END_COL) {
-                    reward = 100; // big reward if the computer reaches the end
+                    reward = 100; // big reward if actor reaches the end
                 }
 
                 double maxNextQValue = getBestQValue(newState);
                 
+                // big gross block, all this does is either set bad qValues lower, or good qValues higher. THIS IS THE IMPORTANT REINFORCEMENT LEARNING BIT
                 double oldQValue = qValues[currentState][action];
                 double targetValue = reward + (DISCOUNT_FACTOR * maxNextQValue);
                 double newQValue = oldQValue + LEARNING_RATE * (targetValue - oldQValue);
@@ -185,8 +189,9 @@ public class MazeSolver {
 
     private int getBestAction(int state) {
         double[] qValuesForCurrentState = qValues[state];
-        int bestAction = 0;
+        int bestAction = 0; // base case is just the first action in ACTION_DELTAS
         double bestQValue = qValuesForCurrentState[0];
+        // bubble up and find biggest qValue
         for (int i = 1; i < NUM_ACTIONS; i++) {
             if (qValuesForCurrentState[i] > bestQValue) {
                 bestQValue = qValuesForCurrentState[i];
@@ -209,6 +214,7 @@ public class MazeSolver {
     }
 
     public void solveMaze() throws Exception{
+        // didnt want to work with coordinates, so currentState is a single integer, top left is 0 moving right increases by 1 each time - this was a massive pain to do the maths of
         int currentState = START_ROW * MAZE[0].length + START_COL;
         int count = 0;
 
@@ -220,16 +226,16 @@ public class MazeSolver {
                 throw new Exception("ERROR: Cannot complete maze");
             }
 
+            // important difference between solveMaze() and train()
+            // is that NO EXPLORATION is done here - only in train()
+
             int action = getBestAction(currentState);
 
-            // print the most recent action
-            //System.out.println(Arrays.toString(ACTION_DELTAS[action]));
-            // show the current state
             MAZE[currentState / MAZE[0].length][currentState % MAZE[0].length] = "▒";
             
-            int[] delta = ACTION_DELTAS[action];
-            int newCol = Math.max(0, Math.min(MAZE[0].length - 1, (currentState % MAZE[0].length) + delta[0]));
-            int newRow = Math.max(0, Math.min(MAZE.length - 1, (currentState / MAZE[0].length) + delta[1]));
+            int[] chosenAction = ACTION_DELTAS[action];
+            int newCol = Math.max(0, Math.min(MAZE[0].length - 1, (currentState % MAZE[0].length) + chosenAction[0]));
+            int newRow = Math.max(0, Math.min(MAZE.length - 1, (currentState / MAZE[0].length) + chosenAction[1]));
             currentState = newRow * MAZE[0].length + newCol;
 
             mazeDisplay.updateMaze(MAZE);
@@ -240,18 +246,15 @@ public class MazeSolver {
                 // Restore the interrupted status
                 Thread.currentThread().interrupt();}
         }
-        //System.out.println("(" + END_ROW + ", " + END_COL + ")"); // this line cheats a bit
+        // do the last step manually
         MAZE[currentState / MAZE[0].length][currentState % MAZE[0].length] = "▒";
-        mazeDisplay.updateMaze(MAZE);
-
-        //System.out.println(count+1 + "\n");
-        
+        mazeDisplay.updateMaze(MAZE);        
     }
 
     public static void main(String[] args) {
         MazeSolver mazeSolver = new MazeSolver();
 
-
+        // dont think this is how ur supposed to do this
         try {
             mazeSolver.solveMaze();
         }

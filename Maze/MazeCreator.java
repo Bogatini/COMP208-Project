@@ -22,7 +22,7 @@ public class MazeCreator extends JFrame {
 
         setTitle("Maze Creator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout(rows + 1, cols)); // +1 for the button row
+        setLayout(new GridLayout(rows + 1, cols)); // +1 for the print button row - annoyingly this means the print button is a square (cant find a way to make it not stick to the grid payout set in this line)
         initializeGrid();
         addPrintButton();
         setSize(cols * 50, (rows + 1) * 50); // Adjust size based on number of rows and columns
@@ -38,7 +38,7 @@ public class MazeCreator extends JFrame {
                 button.setBackground(Color.WHITE);
                 button.setOpaque(true);
                 button.setBorderPainted(false);
-                final int finalY = y; // Need to make final to use in inner class
+                final int finalY = y; // Need to make final to use in button class (this might be really bad)
                 final int finalX = x;
                 button.addMouseListener(new MouseAdapter() {
                     @Override
@@ -58,12 +58,6 @@ public class MazeCreator extends JFrame {
             }
         }
     }
-    public boolean getContinueFlag() {
-        return continueFlag;
-    }
-    public String[][] getNewMaze() {
-        return maze;
-    }
 
     private void addPrintButton() {
         JButton printButton = new JButton("Print Maze");
@@ -71,8 +65,6 @@ public class MazeCreator extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 continueFlag = true;
-                System.out.println(getContinueFlag());
-                setVisible(false);
                 dispose();
             }
         });
@@ -82,6 +74,9 @@ public class MazeCreator extends JFrame {
     public String[][] getMaze() {
         return maze;
     }
+    public boolean getContinueFlag() {
+        return continueFlag;
+    }
 
     private void printMaze() {
         for (int i = 0; i< maze.length; i++) {
@@ -89,9 +84,8 @@ public class MazeCreator extends JFrame {
         }
     }
 
+    // just for testing purposes, should never be run
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new MazeCreator(10, 10); // Adjust the dimensions of the maze grid
-        });
+        new MazeCreator(10, 10); // Adjust the dimensions of the maze grid
     }
 }

@@ -46,7 +46,8 @@ public class MazeCreator extends JFrame {
                         if (e.getButton() == MouseEvent.BUTTON1) {
                             maze[finalY][finalX] = "█";
                             button.setBackground(Color.BLACK);
-                        } else if (e.getButton() == MouseEvent.BUTTON3) {
+                        } 
+                        else if (e.getButton() == MouseEvent.BUTTON3) {
                             maze[finalY][finalX] = " ";
                             button.setBackground(Color.WHITE);
                         }

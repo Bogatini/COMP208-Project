@@ -1,6 +1,4 @@
 import java.util.Random; // https://docs.oracle.com/javase/8/docs/api/java/util/Random.html
-//import java.lang.*;
-import java.util.Scanner;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,21 +9,11 @@ import java.util.Arrays;
 
 public class MazeSolver {
     
-    public static String[][] MAZE = { // final improves testing performance as MAZE can be cached
-        {" ","█"," "," "," "," "," "," "," "," "},
-        {" ","█"," ","█"," "," "," ","█"," "," "},
-        {" ","█"," "," ","█"," "," "," "," "," "},
-        {" ","█"," ","█"," ","█"," "," "," "," "},
-        {" ","█"," ","█"," "," "," ","█","█","█"},
-        {" "," "," ","█"," "," "," "," "," "," "},
-        {" ","█"," ","█"," ","█"," "," "," "," "},
-        {" ","█"," ","█"," "," "," "," ","█"," "},
-        {" ","█"," ","█"," "," ","█","█","█"," "},
-        {" "," "," ","█"," "," "," "," "," "," "}
-    };
+    public static String[][] MAZE;
 
     private static final int NUM_EPISODES = 10000; // i chose a random big number - the bigger this number the better the path will be
                                                    // 100 is too small, could not complete - 10000 seems to be good for a 10x10 maze
+                                                   // or maybe keep it small - demonstrates how the saved q vaules can be used to extend actor's learning
     
     // arbitrary values, can change later
     private static final double LEARNING_RATE = 0.1;
@@ -36,6 +24,8 @@ public class MazeSolver {
     private static final int START_COL = 0;
     private static final int END_COL = 9;
     private static final int END_ROW = 9;
+    private static final int MAX_COL = 9;
+    private static final int MAX_ROW = 9;
     
     // the different directions the actor can go
     // this is a LIE, the actual directions are right, left, up, down
@@ -51,20 +41,32 @@ public class MazeSolver {
 
     private String qValuesFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\qValues.txt";
 
-    MazeDisplay mazeDisplay = new MazeDisplay(MAZE);
+    MazeDisplay mazeDisplay;
 
     public MazeSolver() {
-        qValues = new double[MAZE.length * MAZE[0].length][NUM_ACTIONS];
-
-        MazeCreator mazeCreator = new MazeCreator(END_ROW, END_COL);
+        MazeCreator mazeCreator = new MazeCreator(MAX_ROW+1, MAX_COL+1); // add one because oops MazeCreator uses the exact number of squares on each axis, while MazeSolver uses list positions
 
         while (!mazeCreator.getContinueFlag()) {
-            System.out.print(""); // i have no idea why, but just ";" doesnt work
+            try {
+                Thread.sleep(1); // This just pauses the loop for a short duration to avoid consuming CPU resources (is this even true??)
+            } 
+            catch (InterruptedException e) {
+                // Do nothing
+            }
         }
 
+        // this is just as bad but it works the same.
+        //while (!mazeCreator.getContinueFlag()) {
+        //    System.out.print(""); // i have no idea why, but just ";" doesnt work
+        //}
         
+        
+        MAZE = mazeCreator.getNewMaze();
 
-        //MAZE = mazeCreator.getNewMaze();
+        mazeDisplay = new MazeDisplay(MAZE);
+
+        qValues = new double[MAZE.length * MAZE[0].length][NUM_ACTIONS];
+
 
         // need to pause here and wait for this to finish ^^^^
 
@@ -91,7 +93,7 @@ public class MazeSolver {
     private void getQValues(String fileName) {       
         try {
             File file = new File(fileName);
-            if (file.exists()) { 
+            if (file.exists()) { // if there is a file with that name
                 BufferedReader reader = new BufferedReader(new FileReader(fileName));
                 String line;
                 int row = 0;

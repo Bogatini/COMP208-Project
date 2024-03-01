@@ -12,12 +12,25 @@ public class MazeCreator extends JFrame {
     private final int cols;
     private final JButton[][] gridButtons;
     private boolean continueFlag = false;
-    public String[][] maze;
+    private String[][] MAZE;
+
+    public String[][] getMaze() {
+        return MAZE;
+    }
+    public boolean getContinueFlag() {
+        return continueFlag;
+    }
+
+    private void printMaze() {
+        for (int i = 0; i< MAZE.length; i++) {
+            System.out.println(Arrays.toString(MAZE[i]));
+        }
+    }
 
     public MazeCreator(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
-        maze = new String[rows][cols];
+        MAZE = new String[rows][cols];
         gridButtons = new JButton[rows][cols];
 
         setTitle("Maze Creator");
@@ -33,7 +46,7 @@ public class MazeCreator extends JFrame {
     private void initializeGrid() {
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < cols; x++) {
-                maze[y][x] = " ";
+                MAZE[y][x] = " ";
                 JButton button = new JButton();
                 button.setBackground(Color.WHITE);
                 button.setOpaque(true);
@@ -44,11 +57,11 @@ public class MazeCreator extends JFrame {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if (e.getButton() == MouseEvent.BUTTON1) {
-                            maze[finalY][finalX] = "█";
+                            MAZE[finalY][finalX] = "█";
                             button.setBackground(Color.BLACK);
                         } 
                         else if (e.getButton() == MouseEvent.BUTTON3) {
-                            maze[finalY][finalX] = " ";
+                            MAZE[finalY][finalX] = " ";
                             button.setBackground(Color.WHITE);
                         }
                     }
@@ -65,23 +78,10 @@ public class MazeCreator extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 continueFlag = true;
-                dispose();
+                dispose(); // close the window
             }
         });
         add(printButton);
-    }
-
-    public String[][] getMaze() {
-        return maze;
-    }
-    public boolean getContinueFlag() {
-        return continueFlag;
-    }
-
-    private void printMaze() {
-        for (int i = 0; i< maze.length; i++) {
-            System.out.println(Arrays.toString(maze[i]));
-        }
     }
 
     // just for testing purposes, should never be run

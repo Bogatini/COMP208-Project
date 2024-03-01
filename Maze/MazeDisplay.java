@@ -3,7 +3,7 @@ import java.awt.*;
 
 public class MazeDisplay extends JFrame {
 
-    private static String[][] MAZE;
+    private String[][] MAZE;
 
     public void updateMaze(String[][] maze) {
         this.MAZE = maze;

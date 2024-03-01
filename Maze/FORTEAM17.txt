@@ -1,3 +1,0 @@
-for right now - in MazeSolver you can make whatever maze you want and specify the start and end points with the global variables below the maze. 
-im using weird ascii symbols because before i was printing out the maze, now i should probs change them to something else
-MazeCreator doesnt work as intended right now and can be ignored

@@ -69,6 +69,30 @@ public class MazeCreator extends JFrame {
                             button.setBackground(Color.WHITE);
                         }
                     }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                        if (SwingUtilities.isLeftMouseButton(e)) {
+                            MAZE[finalY][finalX] = "█";
+                            button.setBackground(Color.BLACK);
+                        }
+                        else if (SwingUtilities.isRightMouseButton(e)) {
+                            MAZE[finalY][finalX] = " ";
+                            button.setBackground(Color.WHITE);
+                        }
+                    }
+
+                    @Override
+                    public void mouseDragged(MouseEvent e) {
+                        if (SwingUtilities.isLeftMouseButton(e)) {
+                            MAZE[finalY][finalX] = "█";
+                            button.setBackground(Color.BLACK);
+                        }
+                        else if (SwingUtilities.isRightMouseButton(e)) {
+                            MAZE[finalY][finalX] = " ";
+                            button.setBackground(Color.WHITE);
+                        }
+                    }
                 });
                 gridButtons[y][x] = button;
                 add(button);

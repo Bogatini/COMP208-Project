@@ -22,10 +22,10 @@ public class MazeSolver {
 
     private static final int START_ROW = 0;
     private static final int START_COL = 0;
-    private static final int END_COL = 9;
-    private static final int END_ROW = 9;
-    private static final int MAX_COL = 9;
-    private static final int MAX_ROW = 9;
+    private static final int END_COL = 14;
+    private static final int END_ROW = 14;
+    private static final int MAX_COL = 14;
+    private static final int MAX_ROW = 14;
     
     // the different directions the actor can go
     // this is a LIE, the actual directions are right, left, up, down
@@ -40,13 +40,11 @@ public class MazeSolver {
     private static double[][] qValues;
     // would prefer these two values to be final but whatever
     public static String[][] MAZE;
-
-    // theres a better way of doing this
     
     // depricated
     //private static final String qValuesFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\qValues.txt";
 
-    // https://stackoverflow.com/questions/24709769/java-using-system-getpropertyuser-dir-to-get-the-home-directory - just fackin stole it
+    // https://stackoverflow.com/questions/24709769/java-using-system-getpropertyuser-dir-to-get-the-home-directory - just fackin stole it 
     private static final String qValuesFilePath = System.getProperty("user.dir") + File.separator + "qValues.txt";
 
     MazeDisplay mazeDisplay;

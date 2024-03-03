@@ -5,6 +5,8 @@ public class MazeDisplay extends JFrame {
 
     private String[][] MAZE;
 
+    private final int CELL_SIZE = 50;
+
     public void updateMaze(String[][] maze) {
         this.MAZE = maze;
         repaint(); // Refresh the display
@@ -14,7 +16,7 @@ public class MazeDisplay extends JFrame {
         this.MAZE = maze;
         setTitle("Maze Display");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(maze.length * 50, (maze[0].length+1) * 50);
+        setSize(maze.length * CELL_SIZE, (maze[0].length+1) * CELL_SIZE);
         setLocationRelativeTo(null);
         add(new MazePanel());
         pack(); // Automatically sizes the frame based on contents

@@ -2,8 +2,8 @@ import java.util.Random; // https://docs.oracle.com/javase/8/docs/api/java/util/
 import java.io.BufferedReader; // used to get qvalues from file
 import java.io.BufferedWriter; // used to write  qvalues to file
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileReader; //″
+import java.io.FileWriter; //″
 import java.io.IOException;
 
 public class MazeSolver {

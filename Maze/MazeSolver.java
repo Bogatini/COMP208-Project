@@ -43,7 +43,11 @@ public class MazeSolver {
 
     // theres a better way of doing this
     
-    private static final String qValuesFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\qValues.txt";
+    // depricated
+    //private static final String qValuesFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\qValues.txt";
+
+    // https://stackoverflow.com/questions/24709769/java-using-system-getpropertyuser-dir-to-get-the-home-directory - just fackin stole it
+    private static final String qValuesFilePath = System.getProperty("user.dir") + File.separator + "qValues.txt";
 
     MazeDisplay mazeDisplay;
 

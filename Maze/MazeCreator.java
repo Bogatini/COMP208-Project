@@ -4,13 +4,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Arrays;
+//import java.util.Arrays;
 
 public class MazeCreator extends JFrame {
 
     private final int rows;
     private final int cols;
     private final JButton[][] gridButtons;
+    private final int CELL_SIZE = 50;
     private boolean continueFlag = false;
     private String[][] MAZE;
 
@@ -23,7 +24,10 @@ public class MazeCreator extends JFrame {
 
     private void printMaze() {
         for (int i = 0; i< MAZE.length; i++) {
-            System.out.println(Arrays.toString(MAZE[i]));
+            for (int j = 0; j< MAZE[i].length; j++) {
+                System.out.print(MAZE[i][j] + ", ");
+            }
+            System.out.print("\n");
         }
     }
 
@@ -38,7 +42,7 @@ public class MazeCreator extends JFrame {
         setLayout(new GridLayout(rows + 1, cols)); // +1 for the print button row - annoyingly this means the print button is a square (cant find a way to make it not stick to the grid payout set in this line)
         initializeGrid();
         addPrintButton();
-        setSize(cols * 50, (rows + 1) * 50); // Adjust size based on number of rows and columns
+        setSize(cols * CELL_SIZE, (rows + 1) * CELL_SIZE); // Adjust size based on number of rows and columns
         setLocationRelativeTo(null); // Center the window
         setVisible(true);
     }

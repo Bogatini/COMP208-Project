@@ -1,17 +1,19 @@
 import java.util.Random; // https://docs.oracle.com/javase/8/docs/api/java/util/Random.html
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.BufferedReader; // used to get qvalues from file
+import java.io.BufferedWriter; // used to write  qvalues to file
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
 
 public class MazeSolver {
+
+    // final variables are better - can be cached?
     
     private static final int NUM_EPISODES = 10000; // i chose a random big number - the bigger this number the better the path will be
-                                                   // 100 is too small, could not complete - 10000 seems to be good for a 10x10 maze
+                                                   // 100 is too small, might not complete - 10000 seems to be good for a 10x10 maze
                                                    // or maybe keep it small - demonstrates how the saved q vaules can be used to extend actor's learning
+                                                   // e.g. if it cant find a path with 100 eps, if you run the same maze and get the q values each time, eventually it will "learn" how to solve it
     
     // arbitrary values, can change later
     private static final double LEARNING_RATE = 0.1;
@@ -36,10 +38,11 @@ public class MazeSolver {
     // each item in qValues is list of 4 doubles which hold the q value of each possible action
     // there is one of these arrays for each position on the maze
     private static double[][] qValues;
-
+    // would prefer these two values to be final but whatever
     public static String[][] MAZE;
 
     // theres a better way of doing this
+    
     private static final String qValuesFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\qValues.txt";
 
     MazeDisplay mazeDisplay;
@@ -69,8 +72,6 @@ public class MazeSolver {
         // list of every possible state, with a list of qValues for each possible action when in said state
         qValues = new double[MAZE.length * MAZE[0].length][NUM_ACTIONS];
 
-        // need to pause here and wait for this to finish ^^^^
-
         // either gets or randomly generates q values
         getQValues(qValuesFilePath);
 
@@ -78,7 +79,7 @@ public class MazeSolver {
         train();
 
         // once train() has run, all q values are determined for the maze. WriteQValues() saves them to a file
-        writeQValues(qValuesFilePath); 
+        writeQValues(qValuesFilePath);
     }
 
     private void initializeQValues() {
@@ -94,6 +95,7 @@ public class MazeSolver {
     private void getQValues(String fileName) {       
         try {
             File file = new File(fileName);
+            
             if (file.exists()) { // if there is a file with given name
                 BufferedReader reader = new BufferedReader(new FileReader(fileName));
                 String line;
@@ -148,7 +150,6 @@ public class MazeSolver {
 
                 // i want the actor to prioritise solving the maze as efficiently as possible
                 // maybe increase punishment the more steps it takes?
-
                 
                 // EXPLORATION_RATE determines how often new random actions are chosen
                 if (random.nextDouble() < EXPLORATION_RATE) {
@@ -164,7 +165,7 @@ public class MazeSolver {
 
                 double reward;
                 if (MAZE[newRow][newCol].equals("█")) { // if new position is a wall, punish actor
-                    reward = -10000; // may need to reduce this?
+                    reward = -10000; // may need to change this?
                 }
                 else {
                     reward = 0; // dont punish actor if the new position is not a wall
@@ -179,7 +180,14 @@ public class MazeSolver {
                 // big gross block, all this does is either set bad qValues lower, or good qValues higher. THIS IS THE IMPORTANT REINFORCEMENT LEARNING BIT
                 double oldQValue = qValues[currentState][action];
                 double targetValue = reward + (DISCOUNT_FACTOR * maxNextQValue);
+
+                // this might work? if the actor goes away from the end point the reward is reduced, but going away from the end point may be needed to find the end?
+                // after testing, this sometimes makes it push through walls because the reward reduction from it is less than if the actor backtracks
+                //targetValue = targetValue - ((END_COL*END_ROW - currentState)/100);
+
                 double newQValue = oldQValue + LEARNING_RATE * (targetValue - oldQValue);
+
+                //System.out.println(reward + " " + targetValue + " " + newQValue);
 
                 qValues[currentState][action] = newQValue;
                 currentState = newState;
@@ -260,7 +268,7 @@ public class MazeSolver {
         }
         catch (Exception e)  {
             System.err.println(e.getMessage());
+            System.exit(0);
         }
-        
     }
 }

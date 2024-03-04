@@ -42,14 +42,17 @@ public class MazeSolver {
     public static String[][] MAZE;
     
     // depricated
-    //private static final String qValuesFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\qValues.txt";
+    private static final String qValuesFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\qValues.txt";
+
+    private static final String mazeFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\maze1.txt";
 
     // https://stackoverflow.com/questions/24709769/java-using-system-getpropertyuser-dir-to-get-the-home-directory - just fackin stole it 
-    private static final String qValuesFilePath = System.getProperty("user.dir") + File.separator + "qValues.txt";
+    //private static final String bbb = System.getProperty("user.dir") + File.separator + "qValues.txt";
 
     MazeDisplay mazeDisplay;
 
     public MazeSolver() {
+
         MazeCreator mazeCreator = new MazeCreator(MAX_ROW+1, MAX_COL+1); // add one because oops MazeCreator uses the exact number of squares on each axis, while MazeSolver uses list positions
 
         // this whole section sucks - must find a way to pause MazeSolver and wait for MazeCreator to finish
@@ -67,21 +70,27 @@ public class MazeSolver {
         //    System.out.print(""); // i have no idea why, but just ";" doesnt work
         //}
         
+        // user creates their own maze
         MAZE = mazeCreator.getMaze();
+        
+        // get maze from file
+        //readMazeFile(mazeFilePath);
 
         mazeDisplay = new MazeDisplay(MAZE);
 
         // list of every possible state, with a list of qValues for each possible action when in said state
         qValues = new double[MAZE.length * MAZE[0].length][NUM_ACTIONS];
 
-        // either gets or randomly generates q values
-        getQValues(qValuesFilePath);
+        // either gets qvalues or randomly generates them if no file is present
+        readQValues(qValuesFilePath);
 
         // trains to find qValues
         train();
 
         // once train() has run, all q values are determined for the maze. WriteQValues() saves them to a file
         writeQValues(qValuesFilePath);
+
+        writeMazeToFile(mazeFilePath);
     }
 
     private void initializeQValues() {
@@ -94,7 +103,7 @@ public class MazeSolver {
     }
 
     // get the old qValues from file, if the file is there. if not, generate them
-    private void getQValues(String fileName) {       
+    private void readQValues(String fileName) {       
         try {
             File file = new File(fileName);
             
@@ -143,6 +152,52 @@ public class MazeSolver {
         } 
     }
 
+    private void writeMazeToFile(String fileName) {
+        try {
+            File file = new File(fileName);
+            file.createNewFile();
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+
+            // MIGHT BE THE WRONG WAY ROUND
+            for (int i = 0; i < MAX_ROW; i++) {
+                for (int j = 0; j < MAX_COL; j++) {
+                    writer.write(MAZE[i][j] + ", ");
+                }
+                writer.write("\n");
+            }
+            writer.close();
+        } 
+        catch (IOException e) {
+            e.printStackTrace();
+        } 
+    }
+
+    private void readMazeFile(String fileName) {       
+        try {
+            File file = new File(fileName);
+            
+            if (file.exists()) { // if there is a file with given name
+                BufferedReader reader = new BufferedReader(new FileReader(fileName));
+                String line;
+                int row = 0;
+
+                // can definately clean this up - should now just be a nested for loop, not a while and for
+                while ((line = reader.readLine()) != null && row < MAX_COL) { // read until the end of the file, or until all qValues have been filled - should probably just choose one
+                    String[] values = line.split(", ");
+
+                    for (int column = 0; column < values.length; column++) {
+                        MAZE[row][column] = values[column];
+                    }
+                    row++;
+                }
+                reader.close();
+            }
+        } catch (IOException e) { // most likely reason this is triggered is a bad path name
+            e.printStackTrace();
+        }
+    }
+
     private void train() {
         Random random = new Random();
         for (int i = 0; i < NUM_EPISODES; i++) {
@@ -166,7 +221,7 @@ public class MazeSolver {
                 int newState = (newRow * MAZE[0].length) + newCol;
 
                 double reward;
-                if (MAZE[newRow][newCol].equals("█")) { // if new position is a wall, punish actor
+                if (MAZE[newRow][newCol].equals("W")) { // if new position is a wall, punish actor
                     reward = -10000; // may need to change this?
                 }
                 else {
@@ -241,7 +296,7 @@ public class MazeSolver {
 
             int action = getBestAction(currentState);
 
-            MAZE[currentState / MAZE[0].length][currentState % MAZE[0].length] = "▒";
+            MAZE[currentState / MAZE[0].length][currentState % MAZE[0].length] = "P";
             
             int[] chosenAction = ACTION_DELTAS[action];
             int newCol = Math.max(0, Math.min(MAZE[0].length - 1, (currentState % MAZE[0].length) + chosenAction[0]));
@@ -257,7 +312,7 @@ public class MazeSolver {
                 Thread.currentThread().interrupt();}
         }
         // do the last step manually
-        MAZE[currentState / MAZE[0].length][currentState % MAZE[0].length] = "▒";
+        MAZE[currentState / MAZE[0].length][currentState % MAZE[0].length] = "P";
         mazeDisplay.updateMaze(MAZE);        
     }
 

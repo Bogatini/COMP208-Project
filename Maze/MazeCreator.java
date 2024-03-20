@@ -61,7 +61,7 @@ public class MazeCreator extends JFrame {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if (e.getButton() == MouseEvent.BUTTON1) {
-                            MAZE[finalY][finalX] = "█";
+                            MAZE[finalY][finalX] = "W";
                             button.setBackground(Color.BLACK);
                         } 
                         else if (e.getButton() == MouseEvent.BUTTON3) {
@@ -73,7 +73,7 @@ public class MazeCreator extends JFrame {
                     @Override
                     public void mouseEntered(MouseEvent e) {
                         if (SwingUtilities.isLeftMouseButton(e)) {
-                            MAZE[finalY][finalX] = "█";
+                            MAZE[finalY][finalX] = "W";
                             button.setBackground(Color.BLACK);
                         }
                         else if (SwingUtilities.isRightMouseButton(e)) {
@@ -85,7 +85,7 @@ public class MazeCreator extends JFrame {
                     @Override
                     public void mouseDragged(MouseEvent e) {
                         if (SwingUtilities.isLeftMouseButton(e)) {
-                            MAZE[finalY][finalX] = "█";
+                            MAZE[finalY][finalX] = "W";
                             button.setBackground(Color.BLACK);
                         }
                         else if (SwingUtilities.isRightMouseButton(e)) {

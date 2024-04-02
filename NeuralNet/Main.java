@@ -19,7 +19,7 @@ public class Main {
 
         System.out.println(answers);
 
-        network.train(data, answers);
+        network.train(data, answers, 1000);
 
         Double prediction = network.predict(115, 66);
         System.out.println("prediction: " + prediction);

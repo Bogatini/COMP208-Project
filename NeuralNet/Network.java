@@ -2,19 +2,21 @@ import java.util.*;
 
 public class Network {
 
+    // Instantiate the list of neurons, that is used as the network.
     List<Neuron> neurons = Arrays.asList(
         new Neuron(), new Neuron(), new Neuron(), // input nodes
         new Neuron(), new Neuron(), // hidden nodes
         new Neuron() // output node
     );
 
-    // train the network
-    public void train(List<List<Integer>> data, List<Double> answers) {
+    // Train the network
+    public void train(List<List<Integer>> data, List<Double> answers, int epochCount) {
         Double bestEpochLoss = null;
 
-        for (int epoch = 0; epoch < 1000; epoch++) {
+        // Iterate for as many epochs as specified.
+        for (int epoch = 0; epoch < epochCount; epoch++) {
             
-            // adapt neuron
+            // Adapt Neuron.
             Neuron epochNeuron = neurons.get(epoch % 6);
             epochNeuron.mutate();
 

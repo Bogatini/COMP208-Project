@@ -3,6 +3,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Main {
+
+    /**
+     * Method called from the command line to test the neural network.
+     * @param args
+     */
     public static void main(String[] args) {
 
         Network network = new Network();

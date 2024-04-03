@@ -1,18 +1,28 @@
-import java.util.Random;
+import java.util.*;
 
 public class Neuron {
     Random random = new Random();
 
-    // initialise bias, and the two weights as random doubles between -1 and 1
-    private Double bias = randomFraction();
-    public Double weight1 = randomFraction();
-    private Double weight2 = randomFraction();
+    private Double bias;
+    private List<Double> weights = new ArrayList<Double>();
 
-    // "old" versions of weights and bias, to trach changes during training.
+    private Double oldBias;
+    private List<Double> oldWeights = new ArrayList<Double>();
 
-    private Double oldBias = randomFraction();
-    public Double oldWeight1 = randomFraction();
-    private Double oldWeight2 = randomFraction();
+    public Neuron(int connections) {
+        // randomise bias
+
+        bias = randomFraction();
+        oldBias = bias;
+        
+        // fill the weights list with random values.
+        for (int i = 0; i < connections; i++) {
+            weights.add(randomFraction());
+        }
+
+        oldWeights = weights;
+    }
+
 
     // returns a random value between -1 and 1 exclusive.
     public double randomFraction() {
@@ -22,33 +32,26 @@ public class Neuron {
 
     // picks a property at random, and adds a value between -1 and 1 at random to it.
     public void mutate() {
-        int propertyToChange = random.nextInt(3);
+        int propertyToChange = random.nextInt(weights.size() + 1);
         Double changeFactor = randomFraction();
-
-        switch (propertyToChange) {
-            case 1:
-                weight1 += changeFactor;
-                break;
-            case 2:
-                weight2 += changeFactor;
-                break;
-            default:
-                bias += changeFactor;
+        if (propertyToChange == weights.size()) {
+            bias += changeFactor;
+        } else {
+            Double newWeight = weights.get(propertyToChange) + changeFactor;
+            weights.set(propertyToChange, newWeight);
         }
     }
 
     // rolls back the most recent change.
     public void forget() {
         bias = oldBias;
-        weight1 = oldWeight1;
-        weight2 = oldWeight2;
+        weights = oldWeights;
     }
 
     // copies the current value to the buffer.
     public void remember() {
         oldBias = bias;
-        oldWeight1 = weight1;
-        oldWeight2 = weight2;
+        oldWeights = weights;
     }
 
     // compute an output from two inputs, using this node's attributes.

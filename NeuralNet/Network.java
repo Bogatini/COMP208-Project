@@ -52,7 +52,7 @@ public class Network {
         }
     }
     
-    // make a prediction
+    // make a prediction (this needs to be re-written to be recursive)
     public Double predict(Integer input1, Integer input2) {
         return neurons.get(5).compute(
             neurons.get(4).compute(

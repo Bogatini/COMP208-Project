@@ -1,5 +1,6 @@
 import java.util.*;
-import org.ejml.simple;
+import org.ejml.simple.*;
+
 
 public class Layer {
 

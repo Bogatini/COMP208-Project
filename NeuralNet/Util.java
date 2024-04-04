@@ -14,12 +14,12 @@ public class Util {
         return input;
     }
 
-    public static Double meanSquareLoss (List<Double> correctAnswers, List<Double> predictedAnswers) {
+    public static Double meanSquareLoss (List<SimpleMatrix> correctAnswers, List<SimpleMatrix> predictedAnswers) {
         Double sumSquare = 0d;
 
         for (int i = 0; i < correctAnswers.size(); i++) {
-            Double error = correctAnswers.get(i) - predictedAnswers.get(i);
-            sumSquare += (error * error);
+            SimpleMatrix error = correctAnswers.get(i).minus(predictedAnswers.get(i));
+            sumSquare += error.elementPower(2d).elementSum();
         }
         return sumSquare / (correctAnswers.size());
     }

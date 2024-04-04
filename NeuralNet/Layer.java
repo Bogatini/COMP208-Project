@@ -64,14 +64,12 @@ public class Layer {
     }
 
     // compute layer, for predictions
-    public SimpleMatrix compute(Double[] inputs) {
+    public SimpleMatrix compute(SimpleMatrix inputs) {
         SimpleMatrix activations = new SimpleMatrix(size, 1);
         
         // if input layer
         if (prevLayer == null) {
-            for (int i = 0; i < size; i++) {
-                activations.set(i, inputs[i]);
-            }
+            return inputs;
         }
         // otherwise:
         else {

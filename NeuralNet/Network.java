@@ -15,54 +15,51 @@ public class Network {
         outputLayer = layers.get(layers.size()-1);
     }
     
-    /*
+    
     // Train the network
-    public void train(List<List<Integer>> data, List<Double> answers, int epochCount) {
+    public void train(List<SimpleMatrix> data, List<SimpleMatrix> answers, int epochCount) {
         Double bestEpochLoss = null;
+        int epoch = 0;
 
         // Iterate for as many epochs as specified.
-        for (int epoch = 0; epoch < epochCount; epoch++) {
-            
-            // Adapt Neuron.
-            Neuron epochNeuron = neurons.get(epoch % 6);
-            epochNeuron.mutate();
+        for (int layer = 1; layer < layers.size() && epoch < epochCount; layer++) {
+            Layer epochLayer = layers.get(layer);
+            int neurons = epochLayer.getSize();
+            for (int neuron = 0; neuron < neurons && epoch < epochCount; neuron++) {
+                epochLayer.mutateNeuron(neuron);
 
-            List<Double> predictions = new ArrayList<Double>();
-            for (int i = 0; i < data.size(); i++) {
-                predictions.add(
-                    i, 
-                    predict(
-                        data.get(i).get(0), 
-                        data.get(i).get(1)
-                    )
-                );
-            }
-            
-            Double thisEpochLoss = Util.meanSquareLoss(answers, predictions);
+                List<SimpleMatrix> predictions = new ArrayList<SimpleMatrix>();
+                for (int i = 0; i < data.size(); i++) {
+                    predictions.add(predict(data.get(i)));
+                }
+                
+                Double thisEpochLoss = Util.meanSquareLoss(answers, predictions);
 
-            if(bestEpochLoss == null || thisEpochLoss < bestEpochLoss) {
-                bestEpochLoss = thisEpochLoss;
-                epochNeuron.remember();
-            } else {
-                epochNeuron.forget();
-            }
+                if(bestEpochLoss == null || thisEpochLoss < bestEpochLoss) {
+                    bestEpochLoss = thisEpochLoss;
+                    epochLayer.remember(neuron);
+                } else {
+                    epochLayer.forget(neuron);
+                }
 
-            // Logging:
-            if (epoch % 10 == 0) {
-                System.out.println(
-                    String.format(
-                            "Epoch: %s | bestEpochLoss: %.15f | thisEpochLoss: %.15f", 
-                        epoch, bestEpochLoss, thisEpochLoss
-                    )
-                );
+                // Logging:
+                if (epoch % 10 == 0) {
+                    System.out.println(
+                        String.format(
+                                "Epoch: %s | bestEpochLoss: %.15f | thisEpochLoss: %.15f", 
+                            epoch, bestEpochLoss, thisEpochLoss
+                        )
+                    );
+                }
+
+                epoch ++;
             }
         }
     }
-    */
     
-    // make a prediction (this needs to be re-written to be recursive)
-    public void predict(Double[] inputs) {
-        SimpleMatrix predictions = outputLayer.compute(inputs);
-        predictions.print();
+    
+    // make a prediction
+    public SimpleMatrix predict(SimpleMatrix inputs) {
+        return outputLayer.compute(inputs);
     }
 }

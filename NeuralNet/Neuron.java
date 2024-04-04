@@ -54,10 +54,10 @@ public class Neuron {
         oldWeights = weights;
     }
 
-    // compute an output from two inputs, using this node's attributes.
+    /* // compute an output from two inputs, using this node's attributes.
     public double compute(double input1, double input2) {
         double preActivation = (weight1 * input1) + (weight2 * input2) + bias;
         double output = Util.sigmoid(preActivation);
         return output;
-    }
+    } */
 }

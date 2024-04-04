@@ -1,14 +1,21 @@
 import java.util.*;
+import org.ejml.simple.*;
 
 public class Network {
 
-    // Instantiate the list of neurons, that is used as the network.
-    List<Neuron> neurons = Arrays.asList(
-        new Neuron(), new Neuron(), new Neuron(), // input nodes
-        new Neuron(), new Neuron(), // hidden nodes
-        new Neuron() // output node
-    );
+    // Instantiate the list of layers, that is used as the network.
+    List<Layer> layers = new ArrayList<Layer>();
+    private Layer outputLayer;
 
+    public Network(int[] structure) {
+        layers.add(new Layer(structure[0]));
+        for (int i = 1; i < structure.length; i++) {
+            layers.add(new Layer(layers.get(i-1), structure[i]));
+        }
+        outputLayer = layers.get(layers.size()-1);
+    }
+    
+    /*
     // Train the network
     public void train(List<List<Integer>> data, List<Double> answers, int epochCount) {
         Double bestEpochLoss = null;
@@ -51,18 +58,11 @@ public class Network {
             }
         }
     }
+    */
     
     // make a prediction (this needs to be re-written to be recursive)
-    public Double predict(Integer input1, Integer input2) {
-        return neurons.get(5).compute(
-            neurons.get(4).compute(
-                neurons.get(2).compute(input1, input2), 
-                neurons.get(1).compute(input1, input2)
-            ),
-            neurons.get(3).compute(
-                neurons.get(1).compute(input1, input2),
-                neurons.get(0).compute(input1, input2)
-            )
-        );
+    public void predict(Double[] inputs) {
+        SimpleMatrix predictions = outputLayer.compute(inputs);
+        predictions.print();
     }
 }

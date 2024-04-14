@@ -42,12 +42,13 @@ public class MazeSolver {
     public static String[][] MAZE;
     
     // depricated
-    private static final String qValuesFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\qValues.txt";
+    //private static final String qValuesFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\qValues.txt";
+    //private static final String mazeFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\maze1.txt";
 
-    private static final String mazeFilePath = "C:\\Users\\fmort\\Desktop\\COMP208 Project\\maze1.txt";
+    private static final String mazeFilePath = System.getProperty("user.dir") + File.separator + "maze1.txt";
 
     // https://stackoverflow.com/questions/24709769/java-using-system-getpropertyuser-dir-to-get-the-home-directory - just fackin stole it 
-    //private static final String bbb = System.getProperty("user.dir") + File.separator + "qValues.txt";
+    private static final String qValuesFilePath = System.getProperty("user.dir") + File.separator + "qValues.txt";
 
     MazeDisplay mazeDisplay;
 
@@ -133,6 +134,7 @@ public class MazeSolver {
 
     // write all qValues to a .txt file of given name
     private void writeQValues(String fileName) {
+        System.out.println(fileName);
         try {
             File file = new File(fileName);
             file.createNewFile();
@@ -226,6 +228,10 @@ public class MazeSolver {
                 }
                 else {
                     reward = 0; // dont punish actor if the new position is not a wall
+                                //
+                                // could add a check here, if the actor is getting close to the end point, give more of a reward than if it was going away
+                                // this could be problematic as the actor should be willing to move away from the end point in order to reach it
+                                // research papers say its fine to give a "delayed reward" - a big dump of points right at the end
                 }
 
                 if (newState == (END_ROW * MAZE[0].length) + END_COL) {

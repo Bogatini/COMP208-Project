@@ -27,7 +27,6 @@ public class Network {
         outputLayer = layers.get(layers.size()-1);
     }
     
-    
     /**
      * Training Method for the Network.
      * @param data The inputs of the Training Data, given as a list of vectors, where each vector is a set of inputs.
@@ -56,7 +55,7 @@ public class Network {
                     // test the accuracy of the network with this neuron mutated on the entire training data.
                     List<SimpleMatrix> predictions = new ArrayList<SimpleMatrix>();
                     for (int i = 0; i < data.size(); i++) {
-                        predictions.add(predict(data.get(i)));
+                        predictions.add(predict(data.get(i), false));
                     }
                     
                     // calculate the loss of this version of the network.
@@ -70,8 +69,8 @@ public class Network {
                         epochLayer.forget(neuron);
                     }
 
-                    // log the training progress every 10 epochs.
-                    if (epoch % 10 == 0) {
+                    // log the training progress every 100 epochs.
+                    if (epoch % 100 == 0) {
                         System.out.println(
                             String.format(
                                     "Epoch: %s | bestEpochLoss: %.15f | thisEpochLoss: %.15f", 
@@ -94,7 +93,7 @@ public class Network {
      * @param inputs A vector of the inputs.
      * @return A vector of the outputs.
      */
-    public SimpleMatrix predict(SimpleMatrix inputs) {
-        return outputLayer.compute(inputs);
+    public SimpleMatrix predict(SimpleMatrix inputs, boolean print) {
+        return outputLayer.compute(inputs, print);
     }
 }

@@ -23,6 +23,8 @@ public class Layer {
     private SimpleMatrix oldBiases;
     private SimpleMatrix oldWeights;
 
+    private int propertyToChange;
+
     /* ************************************************************************************************ */
     /*                                     GENERAL METHODS                                              */
     /* ************************************************************************************************ */
@@ -68,14 +70,12 @@ public class Layer {
      * @param neuron The index of the neuron to be mutated within the layer.
      */
     public void mutateNeuron(int neuron) {
-        int propertyToChange = random.nextInt(weights.getNumCols() + 1);
-        Double changeFactor = ThreadLocalRandom.current().nextDouble(-1d, 1d);
+        propertyToChange = random.nextInt(weights.getNumCols() + 1);
+        Double changeValue = ThreadLocalRandom.current().nextDouble(-1d, 1d);
         if (propertyToChange == weights.getNumCols()) {
-            Double newBias = biases.get(neuron) + changeFactor;
-            biases.set(neuron, newBias);
+            biases.set(neuron, changeValue);
         } else {
-            Double newWeight = weights.get(neuron, propertyToChange) + changeFactor;
-            weights.set(neuron, propertyToChange, newWeight);
+            weights.set(neuron, propertyToChange, changeValue);
         }
     }
 
@@ -84,9 +84,10 @@ public class Layer {
      * @param neuron The index of the neuron within the layer.
      */
     public void forget(int neuron) {
-        biases.set(neuron, oldBiases.get(neuron));
-        for (int i = 0; i < weights.getNumCols(); i++) {
-            weights.set(neuron, i, oldWeights.get(neuron, i));
+        if (propertyToChange == weights.getNumCols()) {
+            biases.set(neuron, oldBiases.get(neuron));
+        } else {
+            weights.set(neuron, propertyToChange, oldWeights.get(neuron, propertyToChange));
         }
     }
 
@@ -95,9 +96,10 @@ public class Layer {
      * @param neuron The index of the neuron within the layer.
      */
     public void remember(int neuron) {
-        oldBiases.set(neuron, biases.get(neuron));
-        for (int i = 0; i < weights.getNumCols(); i++) {
-            oldWeights.set(neuron, i, weights.get(neuron, i));
+        if (propertyToChange == weights.getNumCols()) {
+            oldBiases.set(neuron, biases.get(neuron));
+        } else {
+            oldWeights.set(neuron, propertyToChange, weights.get(neuron, propertyToChange));
         }
     }
 
@@ -113,18 +115,20 @@ public class Layer {
      * @param inputs Vector containing the inputs to be passed to the input layer.
      * @return Vector of the activations of the layer this method was called upon.
      */
-    public SimpleMatrix compute(SimpleMatrix inputs) {
+    public SimpleMatrix compute(SimpleMatrix inputs, boolean print) {
         SimpleMatrix activations = new SimpleMatrix(size, 1);
         
         // if input layer (base case)
         if (prevLayer == null) {
-            return inputs;
+            activations = inputs;
+            if (print) {Util.printVector(activations);}
         }
         // otherwise (recursive step):
         else {
-            SimpleMatrix previousActivations = prevLayer.compute(inputs);
+            SimpleMatrix previousActivations = prevLayer.compute(inputs, print);
             SimpleMatrix preActivation = weights.mult(previousActivations).plus(biases);
             activations = Util.sigmoid(preActivation);
+            if (print) {Util.printVector(activations);}
         }
         
         return activations;

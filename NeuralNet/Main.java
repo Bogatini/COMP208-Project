@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         
         // create the network
-        int[] structure = {2, 10, 10, 1};
+        int[] structure = {2, 5, 5, 5, 1};
         Network network = new Network(structure);
         
         // read in training set from file.
@@ -91,7 +91,7 @@ public class Main {
         int incorrect = 0;
 
         for (int test = 0; test < tests; test++) {
-            SimpleMatrix prediction = network.predict(testData.get(test));
+            SimpleMatrix prediction = network.predict(testData.get(test), false);
             Double predictedValue = prediction.get(0);
             int answer = (int) Math.round(sexes.get(test));
             int guess = (int) Math.round(predictedValue);
@@ -103,6 +103,9 @@ public class Main {
             }
         }
         System.out.println("\nTesting Complete.\n" + tests + " tests: " + correct + " correct, " + incorrect + " incorrect.\nAccuracy: " + (Math.round((double)correct/((double)tests) * 100d)) + "%");
+
+        // test again, printing activations:
+        SimpleMatrix prediction = network.predict(new SimpleMatrix(new double[]{175.14d,107.25d}), true);
         
         
     }

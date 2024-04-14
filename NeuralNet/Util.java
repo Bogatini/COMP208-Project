@@ -1,5 +1,5 @@
 /**
- * Class containing useful methods for mathematical processing, used in the training and use of Layer.java and Network.java.
+ * Class containing useful methods for processing, used in the training and use of Layer.java and Network.java.
  */
 
 import java.util.*;
@@ -7,6 +7,14 @@ import java.util.concurrent.ThreadLocalRandom;
 import org.ejml.simple.*;
 
 public class Util {
+    
+    public static void printVector(SimpleMatrix vector) {
+        double[] vectorArray = new double[vector.getNumRows()];
+        for (int i = 0; i < vector.getNumRows(); i++) {
+            vectorArray[i] = vector.get(i);
+        }
+        System.out.println(Arrays.toString(vectorArray));
+    }
     
     /**
      * Applies a sigmoid function to all of the values in a matrix.

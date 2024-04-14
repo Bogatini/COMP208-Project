@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) {
         
         // create the network
-        int[] structure = {2, 10, 10, 10, 1};
+        int[] structure = {2, 10, 10, 1};
         Network network = new Network(structure);
         
         // read in training set from file.
@@ -53,7 +53,7 @@ public class Main {
         trainingAnswers.get(0).printDimensions();
         System.out.println("\nBeginning Training.");
 
-        network.train(trainingData, trainingAnswers, 1000);
+        network.train(trainingData, trainingAnswers, 100000);
         System.out.println("Training complete.\n");
 
         // read in test dataset from file.
@@ -93,16 +93,16 @@ public class Main {
         for (int test = 0; test < tests; test++) {
             SimpleMatrix prediction = network.predict(testData.get(test));
             Double predictedValue = prediction.get(0);
-            Double answer = sexes.get(test);
-            System.out.println("Test " + test + ": " + predictedValue + " (" + answer + ")");
-            Double guess = (predictedValue >= 0.5) ? 1d : 0d;
+            int answer = (int) Math.round(sexes.get(test));
+            int guess = (int) Math.round(predictedValue);
+            System.out.println("Test " + test + ": " + predictedValue + "; answer: " + answer + "; guess: " + guess + "; correct: " + (guess == answer));
             if (guess == answer) {
                 correct ++;
             } else {
                 incorrect ++;
             }
         }
-        System.out.println("\nTesting Complete.\n" + tests + " tests: " + correct + " correct, " + incorrect + " incorrect.\nAccuracy: " + (Math.round((double)correct/((double)tests) * 100d)));
+        System.out.println("\nTesting Complete.\n" + tests + " tests: " + correct + " correct, " + incorrect + " incorrect.\nAccuracy: " + (Math.round((double)correct/((double)tests) * 100d)) + "%");
         
         
     }

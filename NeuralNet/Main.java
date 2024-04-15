@@ -53,7 +53,7 @@ public class Main {
         trainingAnswers.get(0).printDimensions();
         System.out.println("\nBeginning Training.");
 
-        network.train(trainingData, trainingAnswers, 100000);
+        //network.train(trainingData, trainingAnswers, 100000);
         System.out.println("Training complete.\n");
 
         // read in test dataset from file.

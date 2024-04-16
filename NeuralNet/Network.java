@@ -34,7 +34,7 @@ public class Network {
      * @param epochCount The number of epochs to train the data for. 
      *                   Note that each epoch will change one weight or the bias of one neuron in the network.
      */
-    public void train(List<SimpleMatrix> data, List<SimpleMatrix> answers, int epochCount) {
+    public void train(List<SimpleMatrix> data, List<SimpleMatrix> answers, int epochCount, Double learningRate) {
         // initialise minimum loss and epoch counter
         Double bestEpochLoss = null;
         int epoch = 0;
@@ -50,7 +50,7 @@ public class Network {
                 // iterate through every neuron in the layer.
                 for (int neuron = 0; neuron < neurons && epoch < epochCount; neuron++) {
                     // randomly mutate the neuron.
-                    epochLayer.mutateNeuron(neuron);
+                    epochLayer.mutateNeuron(neuron, learningRate);
 
                     // test the accuracy of the network with this neuron mutated on the entire training data.
                     List<SimpleMatrix> predictions = new ArrayList<SimpleMatrix>();
@@ -69,8 +69,8 @@ public class Network {
                         epochLayer.forget(neuron);
                     }
 
-                    // log the training progress every 100 epochs.
-                    if (epoch % 100 == 0) {
+                    // log the training progress every 1000000 epochs.
+                    if (epoch % 1000000 == 0) {
                         System.out.println(
                             String.format(
                                     "Epoch: %s | bestEpochLoss: %.15f | thisEpochLoss: %.15f", 

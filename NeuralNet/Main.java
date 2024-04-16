@@ -5,6 +5,9 @@ import org.ejml.simple.*;
 
 public class Main {
 
+    public static String trainingFile = new String("NeuralNet/XOR.csv");
+    public static String testingFile = new String("NeuralNet/XOR.csv");
+    
     /**
      * Method called from the command line to test the neural network.
      * @param args
@@ -12,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
         
         // create the network
-        int[] structure = {2, 5, 5, 5, 1};
+        int[] structure = {2, 3, 3, 1};
         Network network = new Network(structure);
         
         // read in training set from file.
@@ -22,7 +25,7 @@ public class Main {
         
         String line = "";
         try {
-            BufferedReader br = new BufferedReader(new FileReader("NeuralNet/TrainingSet.csv"));
+            BufferedReader br = new BufferedReader(new FileReader(trainingFile));
             // skip the headings.
             br.readLine();
             // read all the data.
@@ -30,7 +33,8 @@ public class Main {
                 String[] person = line.split(new String(","));
                 heights.add(Double.valueOf(person[0]));
                 weights.add(Double.valueOf(person[1]));
-                sexes.add(person[2].equals("Male") ? 1d : 0d);
+                sexes.add(Double.valueOf(person[2]));
+                // sexes.add(person[2].equals("Male") ? 1d : 0d);
             }
             br.close();
         } catch (IOException e) {
@@ -53,7 +57,7 @@ public class Main {
         trainingAnswers.get(0).printDimensions();
         System.out.println("\nBeginning Training.");
 
-        //network.train(trainingData, trainingAnswers, 100000);
+        network.train(trainingData, trainingAnswers, 100000000, 0.00001d);
         System.out.println("Training complete.\n");
 
         // read in test dataset from file.
@@ -64,7 +68,7 @@ public class Main {
         
         line = "";
         try {
-            BufferedReader br = new BufferedReader(new FileReader("NeuralNet/TestSet.csv"));
+            BufferedReader br = new BufferedReader(new FileReader(testingFile));
             // skip the headings.
             br.readLine();
             // read all the data.
@@ -72,7 +76,8 @@ public class Main {
                 String[] person = line.split(new String(","));
                 heights.add(Double.valueOf(person[0]));
                 weights.add(Double.valueOf(person[1]));
-                sexes.add(person[2].equals("Male") ? 1d : 0d);
+                sexes.add(Double.valueOf(person[2]));
+                //sexes.add(person[2].equals("Male") ? 1d : 0d);
             }
             br.close();
         } catch (IOException e) {
@@ -105,7 +110,7 @@ public class Main {
         System.out.println("\nTesting Complete.\n" + tests + " tests: " + correct + " correct, " + incorrect + " incorrect.\nAccuracy: " + (Math.round((double)correct/((double)tests) * 100d)) + "%");
 
         // test again, printing activations:
-        SimpleMatrix prediction = network.predict(new SimpleMatrix(new double[]{175.14d,107.25d}), true);
+        SimpleMatrix prediction = network.predict(new SimpleMatrix(new double[]{1d,0d}), true);
         
         
     }

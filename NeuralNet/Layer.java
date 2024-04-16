@@ -8,7 +8,6 @@
  */
 
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 import org.ejml.simple.*;
 
@@ -69,13 +68,13 @@ public class Layer {
      * Method to pick a random property of a neuron (one of its weights, or its bias) and change it by a random amount between -1 and 1.
      * @param neuron The index of the neuron to be mutated within the layer.
      */
-    public void mutateNeuron(int neuron) {
+    public void mutateNeuron(int neuron, Double learningRate) {
         propertyToChange = random.nextInt(weights.getNumCols() + 1);
-        Double changeValue = ThreadLocalRandom.current().nextDouble(-1d, 1d);
+        if (random.nextInt(2) == 0) {learningRate = -learningRate;}
         if (propertyToChange == weights.getNumCols()) {
-            biases.set(neuron, changeValue);
+            biases.set(neuron, biases.get(neuron) + learningRate);
         } else {
-            weights.set(neuron, propertyToChange, changeValue);
+            weights.set(neuron, propertyToChange, weights.get(neuron, propertyToChange) + learningRate);
         }
     }
 

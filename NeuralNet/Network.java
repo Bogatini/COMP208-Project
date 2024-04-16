@@ -65,18 +65,20 @@ public class Network {
                     if(bestEpochLoss == null || thisEpochLoss < bestEpochLoss) {
                         bestEpochLoss = thisEpochLoss;
                         epochLayer.remember(neuron);
+                        System.out.println(Util.epochLog);
                     } else {
                         epochLayer.forget(neuron);
                     }
 
-                    // log the training progress every 1000000 epochs.
-                    if (epoch % 1000000 == 0) {
+                    // log the training progress every 10000 epochs.
+                    if (epoch % 1000 == 0) {
                         System.out.println(
                             String.format(
                                     "Epoch: %s | bestEpochLoss: %.15f | thisEpochLoss: %.15f", 
                                 epoch, bestEpochLoss, thisEpochLoss
                             )
                         );
+                        //System.out.println(Util.epochLog);
                     }
                     
                     // increment the epoch counter.

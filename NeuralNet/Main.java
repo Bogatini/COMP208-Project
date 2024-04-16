@@ -1,10 +1,3 @@
-/*  plan to improve training:
-    - give each weight an attribute called 'gradient'
-    - if adjusting a weight in a certain direction improves cost,
-    - continue adjusting in that direction, otherwise try the other.
-
-
-*/
 import java.util.*;
 import java.io.*;
 import org.ejml.simple.*;
@@ -64,7 +57,7 @@ public class Main {
         trainingAnswers.get(0).printDimensions();
         System.out.println("\nBeginning Training.");
 
-        network.train(trainingData, trainingAnswers, 100000, 0.00001d);
+        network.train(trainingData, trainingAnswers, 1000000, 0.5d);
         System.out.println("Training complete.\n");
 
         // read in test dataset from file.
@@ -117,7 +110,7 @@ public class Main {
         System.out.println("\nTesting Complete.\n" + tests + " tests: " + correct + " correct, " + incorrect + " incorrect.\nAccuracy: " + (Math.round((double)correct/((double)tests) * 100d)) + "%");
 
         // test again, printing activations:
-        SimpleMatrix prediction = network.predict(new SimpleMatrix(new double[]{1d,0d}), true);
+        SimpleMatrix prediction = network.predict(new SimpleMatrix(new double[]{0d,0d}), true);
         
         
     }

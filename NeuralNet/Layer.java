@@ -18,6 +18,8 @@ public class Layer {
     private int size;
     private SimpleMatrix biases;
     private SimpleMatrix weights;
+    private SimpleMatrix weightGradients;
+    private SimpleMatrix biasGradients;
 
     private SimpleMatrix oldBiases;
     private SimpleMatrix oldWeights;
@@ -37,7 +39,9 @@ public class Layer {
         prevLayer = previousLayer;
         size = numberOfNeurons;
         biases = Util.randomiseMatrix(size, 1, -1d, 1d);
+        biasGradients = SimpleMatrix.filled(size, 1, 0d);
         weights = Util.randomiseMatrix(size, prevLayer.getSize(), -1d, 1d);
+        weightGradients = SimpleMatrix.filled(size, prevLayer.getSize(), 0d);
 
         oldBiases = biases;
         oldWeights = weights;
@@ -70,11 +74,20 @@ public class Layer {
      */
     public void mutateNeuron(int neuron, Double learningRate) {
         propertyToChange = random.nextInt(weights.getNumCols() + 1);
-        if (random.nextInt(2) == 0) {learningRate = -learningRate;}
         if (propertyToChange == weights.getNumCols()) {
-            biases.set(neuron, biases.get(neuron) + learningRate);
+            Double grad = biasGradients.get(neuron);
+            if (-0.1d < grad && grad < 0.1d) {
+                grad = random.nextBoolean() ? 1d : -1d;
+            }
+            biases.set(neuron, biases.get(neuron) + (learningRate * grad));
+            biasGradients.set(neuron, grad);
         } else {
-            weights.set(neuron, propertyToChange, weights.get(neuron, propertyToChange) + learningRate);
+            Double grad = weightGradients.get(neuron, propertyToChange);
+            if (-0.1d < grad && grad < 0.1d) {
+                grad = random.nextBoolean() ? 1d : -1d;
+            }
+            weights.set(neuron, propertyToChange, weights.get(neuron, propertyToChange) + (learningRate * grad));
+            weightGradients.set(neuron, propertyToChange, grad);
         }
     }
 
@@ -84,8 +97,10 @@ public class Layer {
      */
     public void forget(int neuron) {
         if (propertyToChange == weights.getNumCols()) {
+            biasGradients.set(neuron, 0d);
             biases.set(neuron, oldBiases.get(neuron));
         } else {
+            weightGradients.set(neuron, propertyToChange, 0d);
             weights.set(neuron, propertyToChange, oldWeights.get(neuron, propertyToChange));
         }
     }

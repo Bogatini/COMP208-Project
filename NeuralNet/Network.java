@@ -33,14 +33,25 @@ public class Network {
      * @param answers The outputs of the Training Data, given as a list of vectors, where each vector is a set of outputs
      * @param epochCount The number of epochs to train the data for. 
      *                   Note that each epoch will change one weight or the bias of one neuron in the network.
+     * @param learningRate The factor by which a neuron's property is increased or decreased with each epoch.
      */
     public void train(List<SimpleMatrix> data, List<SimpleMatrix> answers, int epochCount, Double learningRate) {
-        // initialise minimum loss and epoch counter
-        Double bestEpochLoss = null;
+        // initialise epoch counter
         int epoch = 0;
         
+        // test the initial performance of the network.
+        List<SimpleMatrix> predictions = new ArrayList<SimpleMatrix>();
+        for (int i = 0; i < data.size(); i++) {
+            predictions.add(predict(data.get(i), false));
+        }
+
+        // calculate the loss of this version of the network.
+        Double bestEpochLoss = Util.meanSquareLoss(answers, predictions);
+        System.out.println("Loss before training: " + bestEpochLoss);
+
         // repeat until epochCount hit.
         while (epoch < epochCount) {
+
             // iterate through the layers
             for (int layer = 1; layer < layers.size() && epoch < epochCount; layer++) {
                 // set the layer for this epoch.
@@ -53,7 +64,7 @@ public class Network {
                     epochLayer.mutateNeuron(neuron, learningRate);
 
                     // test the accuracy of the network with this neuron mutated on the entire training data.
-                    List<SimpleMatrix> predictions = new ArrayList<SimpleMatrix>();
+                    predictions = new ArrayList<SimpleMatrix>();
                     for (int i = 0; i < data.size(); i++) {
                         predictions.add(predict(data.get(i), false));
                     }
@@ -61,24 +72,23 @@ public class Network {
                     // calculate the loss of this version of the network.
                     Double thisEpochLoss = Util.meanSquareLoss(answers, predictions);
 
-                    // compare this to previous most accurate network, decide to whether to save or revert the change.
-                    if(bestEpochLoss == null || thisEpochLoss < bestEpochLoss) {
+                    // compare this to network before this mutation decide to whether to save or revert the change.
+                    if(thisEpochLoss < bestEpochLoss) {
+                        //System.out.println("Improved the Network by mutating neuron " + layer + "." + neuron +  ". Loss reduced from " + bestEpochLoss + " to " + thisEpochLoss);
                         bestEpochLoss = thisEpochLoss;
                         epochLayer.remember(neuron);
-                        System.out.println(Util.epochLog);
                     } else {
                         epochLayer.forget(neuron);
                     }
 
-                    // log the training progress every 10000 epochs.
+                    // log the training progress every 1000 epochs.
                     if (epoch % 1000 == 0) {
                         System.out.println(
                             String.format(
-                                    "Epoch: %s | bestEpochLoss: %.15f | thisEpochLoss: %.15f", 
-                                epoch, bestEpochLoss, thisEpochLoss
+                                    "Epoch: %s | Learning Rate: %s | bestEpochLoss: %.15f | thisEpochLoss: %.15f", 
+                                epoch, learningRate, bestEpochLoss, thisEpochLoss
                             )
                         );
-                        //System.out.println(Util.epochLog);
                     }
                     
                     // increment the epoch counter.
@@ -86,6 +96,16 @@ public class Network {
                 }
             }
         }
+
+        // test the final performance of the network.
+        predictions = new ArrayList<SimpleMatrix>();
+        for (int i = 0; i < data.size(); i++) {
+            predictions.add(predict(data.get(i), false));
+        }
+        
+        // calculate the loss of this version of the network.
+        Double finalLoss = Util.meanSquareLoss(answers, predictions);
+        System.out.println("Loss after training: " + finalLoss);
     }
     
     

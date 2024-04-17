@@ -40,11 +40,9 @@ public class Util {
      */
     public static Double meanSquareLoss (List<SimpleMatrix> correctAnswers, List<SimpleMatrix> predictedAnswers) {
         Double sumSquare = 0d;
-        epochLog = "\nNew Record: \n";
 
         for (int i = 0; i < correctAnswers.size(); i++) {
             SimpleMatrix error = correctAnswers.get(i).minus(predictedAnswers.get(i));
-            epochLog += "Correct:" + correctAnswers.get(i).toString() + "\nPredicted:" + predictedAnswers.get(i).toString() + "\n Error:" + error.toString();
             sumSquare += error.elementPower(2d).elementSum();
         }
         return sumSquare / (correctAnswers.size());

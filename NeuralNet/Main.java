@@ -5,8 +5,8 @@ import org.ejml.simple.*;
 
 public class Main {
 
-    public static String trainingFile = new String("NeuralNet/XOR.csv");
-    public static String testingFile = new String("NeuralNet/XOR.csv");
+    public static String trainingFile = new String("NeuralNet/TrainingSet.csv");
+    public static String testingFile = new String("NeuralNet/TestSet.csv");
     
     /**
      * Method called from the command line to test the neural network.
@@ -33,8 +33,8 @@ public class Main {
                 String[] person = line.split(new String(","));
                 heights.add(Double.valueOf(person[0]));
                 weights.add(Double.valueOf(person[1]));
-                sexes.add(Double.valueOf(person[2]));
-                // sexes.add(person[2].equals("Male") ? 1d : 0d);
+                //sexes.add(Double.valueOf(person[2]));
+                sexes.add(person[2].equals("Male") ? 1d : 0d);
             }
             br.close();
         } catch (IOException e) {
@@ -57,7 +57,8 @@ public class Main {
         trainingAnswers.get(0).printDimensions();
         System.out.println("\nBeginning Training.");
 
-        network.train(trainingData, trainingAnswers, 1000000, 0.5d);
+        network.train(trainingData, trainingAnswers, 50000, 0.5d);
+
         System.out.println("Training complete.\n");
 
         // read in test dataset from file.
@@ -76,8 +77,8 @@ public class Main {
                 String[] person = line.split(new String(","));
                 heights.add(Double.valueOf(person[0]));
                 weights.add(Double.valueOf(person[1]));
-                sexes.add(Double.valueOf(person[2]));
-                //sexes.add(person[2].equals("Male") ? 1d : 0d);
+                //sexes.add(Double.valueOf(person[2]));
+                sexes.add(person[2].equals("Male") ? 1d : 0d);
             }
             br.close();
         } catch (IOException e) {
@@ -107,11 +108,6 @@ public class Main {
                 incorrect ++;
             }
         }
-        System.out.println("\nTesting Complete.\n" + tests + " tests: " + correct + " correct, " + incorrect + " incorrect.\nAccuracy: " + (Math.round((double)correct/((double)tests) * 100d)) + "%");
-
-        // test again, printing activations:
-        SimpleMatrix prediction = network.predict(new SimpleMatrix(new double[]{0d,0d}), true);
-        
-        
+        System.out.println("\nTesting Complete.\n" + tests + " tests: " + correct + " correct, " + incorrect + " incorrect.\nAccuracy: " + (Math.round((double)correct/((double)tests) * 100d)) + "%");  
     }
 }

@@ -19,7 +19,7 @@ public class MathsGridPuzzle extends JFrame {
 
     private String[][] filledEquationsGrid;
 
-    private String[][] emptyEquationsGrid = new String[][]{
+    private static final String[][] emptyEquationsGrid = new String[][]{
         {"?", "_", "?", "_", "?", "=", "!"},
         {"_", "B", "_", "B", "_", "B", "B"},
         {"?", "_", "?", "_", "?", "=", "!"},
@@ -40,36 +40,38 @@ public class MathsGridPuzzle extends JFrame {
     private long elapsedTime;
 
     public MathsGridPuzzle() {
+        // set up the window
         setTitle("Maths Grid Puzzle");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         setLayout(new GridLayout(emptyEquationsGrid.length + 1, emptyEquationsGrid[0].length));
 
-        // this is where a new puzzle is generated
-
+        // fill the grid with correct numbers
         answerGrid = fillGrid(emptyEquationsGrid);
 
         // used to print out the correct answer
-        /* for (String[] row : emptyEquationsGrid) {
+        /* 
+        for (String[] row : emptyEquationsGrid) {
             for (String cell : row) {
                 System.out.print(cell + " ");
             }
             System.out.println();
-        } */
+        } 
+        */
 
-        // now all we need to do is take out some of the answers from the solved puzzle
-        
+        // take out some of the answers that have just been placed in the grid
         filledEquationsGrid = replaceAnswers(answerGrid);
-       
+        
+        // fill the window with labels and text fields
         initializeGrid(filledEquationsGrid);
 
+        // add check bottom at the bottom of the window
         addCheckButton();
 
         // create and start timer
         JLabel timerLabel = new JLabel("");
 
         startTime = System.currentTimeMillis();
-        // create a timer that every time it ticks activates an ActionListener, this can be used to update the timer label in the window
+        // every time the timer ticks is an action, every time an action is taken the timer label in the window is updated
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -78,13 +80,14 @@ public class MathsGridPuzzle extends JFrame {
             }
         });
         timer.start();
-
+        // add the timer to the next available square, which is next to the check button
         add(timerLabel);
-
+        
+        //not entirely necassary but ensures the window is the correct shape and in the centre of the screen
         setSize(emptyEquationsGrid[0].length * CELL_SIZE, emptyEquationsGrid.length * CELL_SIZE);
         setLocationRelativeTo(null);
-
         pack();
+        // display the window
         setVisible(true);
     }
 
@@ -144,7 +147,15 @@ public class MathsGridPuzzle extends JFrame {
                 int pointer = 0;
 
                 for (JTextField answer : answerFields){
-                    answersIntArray[pointer] = Integer.parseInt(answer.getText());
+                    String contents = answer.getText();
+                    // input steralisation - if the inputted string isnt a digit between 1-9, set it to -1 so it will always be wrong
+                    if (contents.length() == 1 && Character.isDigit(contents.charAt(0))){
+                        answersIntArray[pointer] = Integer.parseInt(answer.getText());
+                    }
+                    else {
+                        answersIntArray[pointer] = -1;
+                    }
+                    
                     pointer+=1;
                 }
                 // now we have inputted values in an array                
@@ -155,7 +166,7 @@ public class MathsGridPuzzle extends JFrame {
                 if (isCorrect) {
                     // end the game and timer
                     timer.stop();
-                    JOptionPane.showMessageDialog(MathsGridPuzzle.this, "All equations are correct!\n" + elapsedTime + " seconds taken");    
+                    JOptionPane.showMessageDialog(MathsGridPuzzle.this, "All equations are correct!\n" + elapsedTime + " seconds taken");
                 } 
                 else {
                     JOptionPane.showMessageDialog(MathsGridPuzzle.this, "Some equations are incorrect.");
@@ -313,6 +324,10 @@ public class MathsGridPuzzle extends JFrame {
             }
         }
         return grid;
+    }
+
+    public long getTime(){
+        return elapsedTime;
     }
 
     public static void main(String[] args) {

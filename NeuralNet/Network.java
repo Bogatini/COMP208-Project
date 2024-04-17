@@ -6,12 +6,16 @@
 
 import java.util.*;
 import org.ejml.simple.*;
+import java.io.*;
 
 public class Network {
 
     // Instantiate the list of layers, that is used as the network.
     List<Layer> layers = new ArrayList<Layer>();
     private Layer outputLayer;
+    private String FOLDER = new String("NeuralNet/");
+    public File networkFile;
+    public File trainingFile;
 
 
     /**
@@ -27,7 +31,32 @@ public class Network {
         outputLayer = layers.get(layers.size()-1);
     }
 
-    // public Network(String filePath, int numberOfInpust)
+    public Network(String fileName, int numberOfInputs) {
+        try {
+            networkFile = new File(FOLDER + fileName + ".txt");
+            if (networkFile.createNewFile()) {
+                trainingFile = new File(FOLDER + fileName + "TrainingSet.csv");
+                layers.add(new Layer(numberOfInputs));
+                for (int i = 1; i < 3; i++) {
+                    layers.add(new Layer(layers.get(i-1), 4));
+                }
+                outputLayer = layers.get(3);
+            } else {
+                Scanner sc = new Scanner(networkFile);
+                List<List<SimpleMatrix>> layerValues = new ArrayList<List<SimpleMatrix>>();
+                while (sc.hasNextLine()) {
+                    layerValues.add(Util.decodeSaveString(sc.nextLine()));
+                }
+                sc.close();
+                layers.add(new Layer(numberOfInputs));
+                for (int i = 1; i < layerValues.size(); i++) {
+                    layers.add(new Layer(layerValues.get(i-1), layers.get(i-1)));
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     // public void save()
     // public void addTrainingData(Double[] inputs, Double time)
 
@@ -87,14 +116,14 @@ public class Network {
                     }
 
                     // log the training progress every 1000 epochs.
-                    /*if (epoch % 1000 == 0) {
+                    if (epoch % 1000 == 0) {
                         System.out.println(
                             String.format(
                                     "Epoch: %s | Learning Rate: %s | bestEpochLoss: %.15f | thisEpochLoss: %.15f", 
                                 epoch, learningRate, bestEpochLoss, thisEpochLoss
                             )
                         );
-                    }*/
+                    }
                     
                     // increment the epoch counter.
                     epoch ++;

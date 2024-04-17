@@ -31,7 +31,26 @@ public class Layer {
     /* ************************************************************************************************ */
     
     /**
-     * Constructor for a Hidden or Output (e.g. non-input) Layer.
+     * Constructor to restore from save a Hidden or Output Layer.
+     * @param loadBiases          the biases           matrix loaded from file
+     * @param loadWeights         "   weights          "
+     * @param loadWeightGradients "   weight gradients "
+     * @param loadBiasGradients   "   bias gradients   "
+     * @param previousLayer reference to the layer that this layer follows in the network.
+     */
+    public Layer( List<SimpleMatrix> values, Layer previousLayer) {
+        prevLayer = previousLayer;
+
+        biases = values.get(0);
+        weights = values.get(1);
+        biasGradients = values.get(2);
+        weightGradients = values.get(3);
+        
+        size = biases.getNumRows();
+    }
+    
+    /**
+     * Constructor for a new Hidden or Output (e.g. non-input) Layer.
      * @param previousLayer Reference to the layer that this layer follows in the network.
      * @param numberOfNeurons Number of neurons to create in this layer.
      */

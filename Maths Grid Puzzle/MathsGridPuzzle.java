@@ -17,17 +17,9 @@ public class MathsGridPuzzle extends JFrame {
     // must give as a single array with those numbers in the correct place
     // this is to be saved to a csv with the time to be used as training data
 
-    private String[][] equations = new String[][]{
-            {"?", "-", "?", "+", "?", "=", "6"},
-            {"-", "B", "+", "B", "-", "B", "B"},
-            {"?", "+", "?", "-", "?", "=", "14"},
-            {"+", "B", "+", "B", "-", "B", "B"},
-            {"?", "-", "?", "+", "?", "=", "5"},
-            {"=", "B", "=", "B", "=", "B", "B"},
-            {"9", "B", "10", "B", "4", "B", "B"}
-    };
+    private String[][] filledEquationsGrid;
 
-    private String[][] emptyEqautionsGrid = new String[][]{
+    private String[][] emptyEquationsGrid = new String[][]{
         {"?", "_", "?", "_", "?", "=", "!"},
         {"_", "B", "_", "B", "_", "B", "B"},
         {"?", "_", "?", "_", "?", "=", "!"},
@@ -41,6 +33,7 @@ public class MathsGridPuzzle extends JFrame {
 
     private final int CELL_SIZE = 50;
     private List<JTextField> answerFields; // a ListArray that can hold the actual interactive labels used to get inputs from user
+                                           // confusing but its the only way to get what the user has put into the fields easily
 
     private Timer timer;
     private long startTime;
@@ -50,14 +43,14 @@ public class MathsGridPuzzle extends JFrame {
         setTitle("Maths Grid Puzzle");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        setLayout(new GridLayout(equations.length + 1, equations[0].length));
+        setLayout(new GridLayout(emptyEquationsGrid.length + 1, emptyEquationsGrid[0].length));
 
         // this is where a new puzzle is generated
 
-        answerGrid = fillGrid(emptyEqautionsGrid);
+        answerGrid = fillGrid(emptyEquationsGrid);
 
         // used to print out the correct answer
-        /* for (String[] row : emptyEqautionsGrid) {
+        /* for (String[] row : emptyEquationsGrid) {
             for (String cell : row) {
                 System.out.print(cell + " ");
             }
@@ -66,9 +59,9 @@ public class MathsGridPuzzle extends JFrame {
 
         // now all we need to do is take out some of the answers from the solved puzzle
         
-        equations = replaceAnswers(answerGrid);
+        filledEquationsGrid = replaceAnswers(answerGrid);
        
-        initializeGrid(equations);
+        initializeGrid(filledEquationsGrid);
 
         addCheckButton();
 
@@ -76,6 +69,7 @@ public class MathsGridPuzzle extends JFrame {
         JLabel timerLabel = new JLabel("");
 
         startTime = System.currentTimeMillis();
+        // create a timer that every time it ticks activates an ActionListener, this can be used to update the timer label in the window
         timer = new Timer(1000, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -87,7 +81,7 @@ public class MathsGridPuzzle extends JFrame {
 
         add(timerLabel);
 
-        setSize(equations[0].length * CELL_SIZE, equations.length * CELL_SIZE);
+        setSize(emptyEquationsGrid[0].length * CELL_SIZE, emptyEquationsGrid.length * CELL_SIZE);
         setLocationRelativeTo(null);
 
         pack();
@@ -144,24 +138,19 @@ public class MathsGridPuzzle extends JFrame {
         checkButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // get values from text fields - using a listarray is the easiest way of doing this, tried with just an array
-                // the values are then cast from an listArray into a String[] then into an int[]
-                List<String> inputValues = new ArrayList<>();
-                for (JTextField answer : answerFields) {
-                    inputValues.add(answer.getText());
-                }
-
-                String[] answersArray = inputValues.toArray(new String[0]);
-
-                int[] answersIntArray = new int[answersArray.length];
-                for (int i = 0; i < answersArray.length; i++) {
-                    answersIntArray[i] = Integer.parseInt(answersArray[i]);
-                }
+                // get values from text fields - using a listArray is the easiest way of doing this, tried with just an array
                 
-                // we now have an array of our answers - answersIntArray
+                int[] answersIntArray = new int[12]; // must be 12 not 9 as some extra squares may be read unintentionally (this does not affect functionality)
+                int pointer = 0;
+
+                for (JTextField answer : answerFields){
+                    answersIntArray[pointer] = Integer.parseInt(answer.getText());
+                    pointer+=1;
+                }
+                // now we have inputted values in an array                
 
                 // check if equations are correct
-                boolean isCorrect = checkEquationsHorizontal(answersIntArray, equations);
+                boolean isCorrect = checkEquations(answersIntArray, filledEquationsGrid);
 
                 if (isCorrect) {
                     // end the game and timer
@@ -176,16 +165,15 @@ public class MathsGridPuzzle extends JFrame {
         add(checkButton);
     }
 
-
-    private boolean checkEquationsHorizontal(int[] answersIntArray, String[][] equations) {
+    private boolean checkEquations(int[] answersIntArray, String[][] filledEquationsGrid) {
         int arrayPointer = 0;
 
-        for (int i = 0; i < (equations.length-2); i+=2){
+        for (int i = 0; i < (filledEquationsGrid.length-2); i+=2){
             int[] answersSubArray = {answersIntArray[arrayPointer], answersIntArray[arrayPointer+1], answersIntArray[arrayPointer+2]};
 
             arrayPointer+=3;
 
-            boolean correct = evaluateEquation(answersSubArray, equations[i]);
+            boolean correct = evaluateEquation(answersSubArray, filledEquationsGrid[i]);
 
             if (!correct) {
                 return false; // equation is not correct
@@ -194,42 +182,36 @@ public class MathsGridPuzzle extends JFrame {
         return true; // all equations are correct
     }
     
-    private boolean evaluateEquation(int[] answersArray, String[] equation) {
-        // have to do this better than har coding it - if you get the lenght of a line, then take two off (= and answer slots) you get an iterable array, step through 2 at a time
-        int result = answersArray[0];
+    private boolean evaluateEquation(int[] equationArray, String[] equation) {
+        // take an equation line from the table, find the mathematical operations and the digits and 
+        int result = equationArray[0];
         
         String operator1 = equation[1];
         String operator2 = equation[3];
         int answer = Integer.parseInt(equation[6]);
 
-
-        // step comes in as 0, 2 or 4
-        // these correlate to sets of three in answersArray, 0 for the first 3, 2 for the second etc.
-
-
         switch (operator1) {
             case "+":
-                result = result + answersArray[1];
+                result = result + equationArray[1];
                 break;
             case "-":
-                result = result - answersArray[1];
+                result = result - equationArray[1];
                 break;
             case "*":
-                result = result * answersArray[1];
+                result = result * equationArray[1];
                 break;
         }
         switch (operator2) {
             case "+":
-                result = result + answersArray[2];
+                result = result + equationArray[2];
                 break;
             case "-":
-                result = result - answersArray[2];
+                result = result - equationArray[2];
                 break;
             case "*":
-                result = result * answersArray[2];
+                result = result * equationArray[2];
                 break;
         }
-        
         return (result == answer);
     }
 
@@ -243,6 +225,7 @@ public class MathsGridPuzzle extends JFrame {
         for (int i = 1; i <= 9; i++) {
             numbers.add(i);
         }
+        //https://stackoverflow.com/questions/16112515/how-to-shuffle-an-arraylist
         Collections.shuffle(numbers);
 
         int baseNumberIndex = 0;
@@ -251,7 +234,9 @@ public class MathsGridPuzzle extends JFrame {
             for (int j = 0; j < grid[i].length; j++) {
                 if (grid[i][j].equals("?")) {
                     grid[i][j] = Integer.toString(numbers.get(baseNumberIndex++));
-                } else if (grid[i][j].equals("_")) {
+
+                } 
+                else if (grid[i][j].equals("_")) {
                     grid[i][j] = operations[random.nextInt(operations.length)];
                 }
             }
@@ -329,9 +314,6 @@ public class MathsGridPuzzle extends JFrame {
         }
         return grid;
     }
-    
-
-    
 
     public static void main(String[] args) {
         MathsGridPuzzle puzzleWindow = new MathsGridPuzzle();

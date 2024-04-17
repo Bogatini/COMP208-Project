@@ -15,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
         
         // create the network
-        int[] structure = {2, 3, 3, 1};
+        int[] structure = {2, 4, 4, 1};
         Network network = new Network(structure);
         
         // read in training set from file.
@@ -57,7 +57,7 @@ public class Main {
         trainingAnswers.get(0).printDimensions();
         System.out.println("\nBeginning Training.");
 
-        network.train(trainingData, trainingAnswers, 50000, 0.5d);
+        network.train(trainingData, trainingAnswers, 10000000, 0.1d);
 
         System.out.println("Training complete.\n");
 

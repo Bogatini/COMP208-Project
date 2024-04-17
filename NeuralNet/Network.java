@@ -26,6 +26,11 @@ public class Network {
         }
         outputLayer = layers.get(layers.size()-1);
     }
+
+    // public Network(String filePath, int numberOfInpust)
+    // public void save()
+    // public void addTrainingData(Double[] inputs, Double time)
+
     
     /**
      * Training Method for the Network.
@@ -74,7 +79,7 @@ public class Network {
 
                     // compare this to network before this mutation decide to whether to save or revert the change.
                     if(thisEpochLoss < bestEpochLoss) {
-                        //System.out.println("Improved the Network by mutating neuron " + layer + "." + neuron +  ". Loss reduced from " + bestEpochLoss + " to " + thisEpochLoss);
+                        System.out.println("Improved the Network by mutating neuron " + layer + "." + neuron +  ". Loss reduced from " + bestEpochLoss + " to " + thisEpochLoss);
                         bestEpochLoss = thisEpochLoss;
                         epochLayer.remember(neuron);
                     } else {
@@ -82,14 +87,14 @@ public class Network {
                     }
 
                     // log the training progress every 1000 epochs.
-                    if (epoch % 1000 == 0) {
+                    /*if (epoch % 1000 == 0) {
                         System.out.println(
                             String.format(
                                     "Epoch: %s | Learning Rate: %s | bestEpochLoss: %.15f | thisEpochLoss: %.15f", 
                                 epoch, learningRate, bestEpochLoss, thisEpochLoss
                             )
                         );
-                    }
+                    }*/
                     
                     // increment the epoch counter.
                     epoch ++;

@@ -42,6 +42,10 @@ public class MathsGridPuzzle extends JFrame {
     private final int CELL_SIZE = 50;
     private List<JTextField> answerFields; // a ListArray that can hold the actual interactive labels used to get inputs from user
 
+    private Timer timer;
+    private long startTime;
+    private long elapsedTime;
+
     public MathsGridPuzzle() {
         setTitle("Maths Grid Puzzle");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -52,22 +56,36 @@ public class MathsGridPuzzle extends JFrame {
 
         answerGrid = fillGrid(emptyEqautionsGrid);
 
-        for (String[] row : emptyEqautionsGrid) {
+        // used to print out the correct answer
+        /* for (String[] row : emptyEqautionsGrid) {
             for (String cell : row) {
                 System.out.print(cell + " ");
             }
             System.out.println();
-        }
+        } */
 
         // now all we need to do is take out some of the answers from the solved puzzle
         
         equations = replaceAnswers(answerGrid);
        
-
-
         initializeGrid(equations);
 
         addCheckButton();
+
+        // create and start timer
+        JLabel timerLabel = new JLabel("");
+
+        startTime = System.currentTimeMillis();
+        timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
+                timerLabel.setText(elapsedTime + " seconds");
+            }
+        });
+        timer.start();
+
+        add(timerLabel);
 
         setSize(equations[0].length * CELL_SIZE, equations.length * CELL_SIZE);
         setLocationRelativeTo(null);
@@ -146,9 +164,11 @@ public class MathsGridPuzzle extends JFrame {
                 boolean isCorrect = checkEquationsHorizontal(answersIntArray, equations);
 
                 if (isCorrect) {
-                    JOptionPane.showMessageDialog(MathsGridPuzzle.this, "All equations are correct!");
                     // end the game and timer
-                } else {
+                    timer.stop();
+                    JOptionPane.showMessageDialog(MathsGridPuzzle.this, "All equations are correct!\n" + elapsedTime + " seconds taken");    
+                } 
+                else {
                     JOptionPane.showMessageDialog(MathsGridPuzzle.this, "Some equations are incorrect.");
                 }
             }

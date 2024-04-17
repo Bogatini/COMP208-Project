@@ -77,21 +77,19 @@ public class MathsGridPuzzle extends JFrame {
     }
 
     private void initializeGrid(String[][] inputGrid) {
-        answerFields = new ArrayList<>(); // Initialize the list
+        answerFields = new ArrayList<>();
 
         for (String[] line : inputGrid) {
-            //for (String item : line) {
             for (int i = 0; i < line.length; i++){
                 String item = line[i];
                 // if there is an empty slot, add a box the user can write in
                 if (item.equals("?")) {
-                    // Create a text field for user input
                     JTextField textField = new JTextField();
                     textField.setHorizontalAlignment(SwingConstants.CENTER);
                     textField.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
                     textField.setBorder(BorderFactory.createLineBorder(Color.BLACK));
                     add(textField);
-                    answerFields.add(textField); // Add the text field to the list
+                    answerFields.add(textField);
 
                 } 
                 // black square
@@ -220,7 +218,7 @@ public class MathsGridPuzzle extends JFrame {
 
         String[] operations = {"+", "-", "*"};
 
-        // Shuffle numbers 1 to 9
+        // shuffle numbers 1 to 9
         ArrayList<Integer> numbers = new ArrayList<>();
         for (int i = 1; i <= 9; i++) {
             numbers.add(i);
@@ -239,7 +237,7 @@ public class MathsGridPuzzle extends JFrame {
             }
         }
 
-        // Calculate and fill answers
+        // calculate and fill answers
         for (int i = 0; i < grid.length; i++) {
             if (grid[i][grid[i].length - 2].equals("=")) {
                 int answer = calculateRow(grid, i);

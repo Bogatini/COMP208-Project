@@ -1,4 +1,3 @@
-import javax.swing.border.Border;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -113,9 +112,6 @@ public class KillerSudokuGame extends JFrame {
     }
 
     private void defineCages() {
-        // This function would randomly assign cages and sums for demonstration
-        // purposes.
-        // Ideally, this should be structured to meet typical Killer Sudoku patterns.
         List<Point> availablePoints = new ArrayList<>();
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
@@ -144,58 +140,46 @@ public class KillerSudokuGame extends JFrame {
             int sum = entry.getValue();
             if (!cagePoints.isEmpty()) {
                 Point firstCell = cagePoints.get(0);
-                cells[firstCell.x][firstCell.y].setText(cells[firstCell.x][firstCell.y].getText() + sum);
+                cells[firstCell.x][firstCell.y].getSumLabel().setText(String.valueOf(sum));
             }
         }
     }
 
     private void applyBorders() {
+        // Apply custom dashed borders to cage boundaries
         for (List<Point> cageCells : cages.keySet()) {
-            int top = GRID_SIZE;
-            int left = GRID_SIZE;
-            int bottom = 0;
-            int right = 0;
+            int topRow = Integer.MAX_VALUE;
+            int bottomRow = Integer.MIN_VALUE;
+            int leftCol = Integer.MAX_VALUE;
+            int rightCol = Integer.MIN_VALUE;
+
+            // Determine the boundaries of the cage
             for (Point p : cageCells) {
-                if (p.x < top)
-                    top = p.x;
-                if (p.y < left)
-                    left = p.y;
-                if (p.x > bottom)
-                    bottom = p.x;
-                if (p.y > right)
-                    right = p.y;
+                topRow = Math.min(topRow, p.x);
+                bottomRow = Math.max(bottomRow, p.x);
+                leftCol = Math.min(leftCol, p.y);
+                rightCol = Math.max(rightCol, p.y);
             }
 
-            for (int row = top; row <= bottom; row++) {
-                for (int col = left; col <= right; col++) {
+            // Apply border to the surrounding cells of the cage
+            for (int row = topRow; row <= bottomRow; row++) {
+                for (int col = leftCol; col <= rightCol; col++) {
                     JTextField cell = cells[row][col];
-                    boolean inCage = cageCells.contains(new Point(row, col));
-                    if (inCage) {
-                        cell.setBorder(new DottedBorder(Color.BLACK, 1));
+                    if (row == topRow || row == bottomRow || col == leftCol || col == rightCol) {
+                        cell.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1)); // Change color for cage borders
                     } else {
-                        int topBorder = (row == top || cageCells.contains(new Point(row - 1, col))) ? 1 : 0;
-                        int leftBorder = (col == left || cageCells.contains(new Point(row, col - 1))) ? 1 : 0;
-                        int bottomBorder = (row == bottom || cageCells.contains(new Point(row + 1, col))) ? 1 : 0;
-                        int rightBorder = (col == right || cageCells.contains(new Point(row, col + 1))) ? 1 : 0;
-                        cell.setBorder(BorderFactory.createMatteBorder(topBorder, leftBorder, bottomBorder, rightBorder,
-                                Color.BLACK));
-                    }
-                }
-            }
-        }
+                        int top = (row == 0 || row % SUBGRID_SIZE == 0) ? 2 : 1;
+                        int left = (col == 0 || col % SUBGRID_SIZE == 0) ? 2 : 1;
+                        int bottom = (row == GRID_SIZE - 1 || (row + 1) % SUBGRID_SIZE == 0) ? 2 : 1;
+                        int right = (col == GRID_SIZE - 1 || (col + 1) % SUBGRID_SIZE == 0) ? 2 : 1;
 
-        // Apply thick black lines for 3x3 grid borders
-        for (int row = 0; row < GRID_SIZE; row++) {
-            for (int col = 0; col < GRID_SIZE; col++) {
-                JTextField cell = cells[row][col];
-                int top = (row == 0 || row % SUBGRID_SIZE == 0) ? 2 : 1;
-                int left = (col == 0 || col % SUBGRID_SIZE == 0) ? 2 : 1;
-                int bottom = (row == GRID_SIZE - 1 || (row + 1) % SUBGRID_SIZE == 0) ? 2 : 1;
-                int right = (col == GRID_SIZE - 1 || (col + 1) % SUBGRID_SIZE == 0) ? 2 : 1;
-                if (top == 2 || left == 2 || bottom == 2 || right == 2) {
-                    cell.setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.BLACK));
-                } else {
-                    cell.setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.LIGHT_GRAY));
+                        // Apply thick black lines for 3x3 grid borders
+                        if (top == 2 || left == 2 || bottom == 2 || right == 2) {
+                            cell.setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.BLACK));
+                        } else {
+                            cell.setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.LIGHT_GRAY));
+                        }
+                    }
                 }
             }
         }
@@ -268,36 +252,5 @@ public class KillerSudokuGame extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(KillerSudokuGame::new);
-    }
-
-    class DottedBorder implements Border {
-        private Color color;
-        private int thickness;
-
-        public DottedBorder(Color color, int thickness) {
-            this.color = color;
-            this.thickness = thickness;
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.setColor(color);
-            Stroke oldStroke = g2d.getStroke();
-            g2d.setStroke(
-                    new BasicStroke(thickness, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[] { 5 }, 0));
-            g2d.drawRect(x, y, width - 1, height - 1);
-            g2d.setStroke(oldStroke);
-        }
-
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(thickness, thickness, thickness, thickness);
-        }
-
-        @Override
-        public boolean isBorderOpaque() {
-            return true;
-        }
     }
 }

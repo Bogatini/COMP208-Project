@@ -1,5 +1,3 @@
-package sudoku;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
@@ -8,11 +6,17 @@ public class DottedTextField extends JTextField {
 
     private Color dotColor;
     private List<Point> cage;
+    private JLabel sumLabel;
 
     public DottedTextField() {
         super();
         dotColor = Color.BLACK;
         setOpaque(false);
+        sumLabel = new JLabel();
+        sumLabel.setFont(new Font("Serif", Font.BOLD, 10)); // Adjust font size and style as needed
+        sumLabel.setForeground(Color.RED); // Adjust color as needed
+        setLayout(new BorderLayout());
+        add(sumLabel, BorderLayout.NORTH);
     }
 
     public DottedTextField(int cols) {
@@ -73,5 +77,9 @@ public class DottedTextField extends JTextField {
                 }
             }
         }
+    }
+
+    public JLabel getSumLabel() {
+        return sumLabel;
     }
 }

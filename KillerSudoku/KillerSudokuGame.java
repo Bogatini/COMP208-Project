@@ -1,5 +1,3 @@
-package sudoku;
-
 import javax.swing.border.Border;
 import javax.swing.*;
 import java.awt.*;

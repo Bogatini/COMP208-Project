@@ -12,7 +12,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -78,6 +77,32 @@ public class MathsGridPuzzle extends JFrame {
             System.out.println();
         } 
         
+        // before starting the game, allow some time for the NN to train
+
+        // creates a loading screen before the puzzle begins. this is used to give time to train the NN
+        JDialog loadingPopUp = new JDialog();
+        loadingPopUp.setTitle("Loading...");
+        loadingPopUp.setModal(true); // stop all user input
+        loadingPopUp.setSize(200, 100);
+        loadingPopUp.setLocationRelativeTo(null); // place at centre of screen
+        loadingPopUp.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // dont let the user close the window, can mess up training algo
+        loadingPopUp.add(new JLabel("Loading... Please wait."));
+        loadingPopUp.setVisible(true);
+
+        neuralNetworkInterface.train((double) 10);
+
+        // Simulate loading by pausing the thread
+        try {
+            Thread.sleep(10000); // Pausing for 2 seconds, you can adjust this time as needed
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        // once the training is done, remove the loading screen and continue the code
+        loadingPopUp.dispose();
+
+
+
 
         // take out some of the answers that have just been placed in the grid
         filledEquationsGrid = replaceAnswers(answerGrid);
@@ -433,6 +458,13 @@ public class MathsGridPuzzle extends JFrame {
         NNArray = getValuesFromTextFields(inputList);
     }
 
+    /**
+     * takes a arrayList of Text Fields the user can enter their answers into
+     * and returns the values inside them
+     * 
+     * @param inputList  arrayList of fields. the number of these may change depending on how many
+     *                   squares the user has to fill
+     */
     private Double[] getValuesFromTextFields(List<JTextField> inputList){
         Double[] outputList = new Double[9];
 

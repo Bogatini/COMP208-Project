@@ -31,17 +31,24 @@ public class Network {
         outputLayer = layers.get(layers.size()-1);
     }
 
+    /**
+     * Constructor for a Network being loaded / to be loaded from a save file.
+     * @param fileName The name of the file the network is/will be stored in.
+     * @param numberOfInputs The number of inputs to the network.
+     */
     public Network(String fileName, int numberOfInputs) {
         try {
             networkFile = new File(FOLDER + fileName + ".txt");
             if (networkFile.createNewFile()) {
-                trainingFile = new File(FOLDER + fileName + "TrainingSet.csv");
+                System.out.println("Creating New Network.");
+                trainingFile = new File(FOLDER + fileName + "TrainingSet.txt");
                 layers.add(new Layer(numberOfInputs));
-                for (int i = 1; i < 3; i++) {
+                for (int i = 1; i < 4; i++) {
                     layers.add(new Layer(layers.get(i-1), 4));
                 }
                 outputLayer = layers.get(3);
             } else {
+                System.out.println("Network Save Found.");
                 Scanner sc = new Scanner(networkFile);
                 List<List<SimpleMatrix>> layerValues = new ArrayList<List<SimpleMatrix>>();
                 while (sc.hasNextLine()) {
@@ -57,9 +64,102 @@ public class Network {
             e.printStackTrace();
         }
     }
-    // public void save()
-    // public void addTrainingData(Double[] inputs, Double time)
+    
+    /**
+     * Saves the network to the file.
+     */
+    public void save() {
+        try {
+            FileWriter wr = new FileWriter(networkFile, false);
+            for (int i = 1; i < layers.size(); i++) {
+                String layerString = Util.encodeSaveString(layers.get(i).getValues());
+                wr.write(layerString);
+                System.out.println("Wrote to file:\n" + layerString);
+                if (i < layers.size() - 1) {
+                    wr.write("\n");
+                }
+            }
+            wr.close();
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    /**
+     * Adds a new piece of data to the training set.
+     * @param inputs Starting state of the puzzle.
+     * @param time Time taken to complete the puzzle.
+     */
+    public void addTrainingData(Double[] inputs, Double time) {
+        String newEntry = new String("");
+        for (Double input : inputs) {
+            newEntry += String.valueOf(input) + ",";
+        }
+        if (time < 30d) {
+            newEntry += String.valueOf(0d);
+        } else if (time < 60) {
+            newEntry += String.valueOf(0.25d);
+        } else if (time < 300) {
+            newEntry += String.valueOf(0.5d);
+        } else if (time < 600) {
+            newEntry += String.valueOf(0.75d);
+        } else {
+            newEntry += String.valueOf(1d);
+        }
+        try {
+            FileWriter wr = new FileWriter(trainingFile, true);
+            wr.write("\n" + newEntry);
+            wr.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Outward-facing method to train the network, based on the saved training data file.
+     * @param duration The number of seconds to train for.
+     */
+    public void train(Double duration) {
+        List<List<Double>> inputs = new ArrayList<List<Double>>();
+        List<Double> outputs = new ArrayList<Double>();
+        
+        try {
+            Scanner sc = new Scanner(trainingFile);
+            while (sc.hasNextLine()) {
+                String readString = sc.nextLine();
+                String[] splitString = readString.split(",");
+                List<Double> input = new ArrayList<Double>();
+                for (int i = 0; i < splitString.length - 1; i++) {
+                    input.add(Double.parseDouble(splitString[i]));
+                }
+                outputs.add(Double.parseDouble(splitString[splitString.length-1]));
+            }
+            sc.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        List<SimpleMatrix> data = new ArrayList<SimpleMatrix>();
+        List<SimpleMatrix> answers = new ArrayList<SimpleMatrix>();
+
+        for (int i = 0; i < inputs.size(); i++) {
+            List<Double> input = inputs.get(i);
+            SimpleMatrix inputMatrix = new SimpleMatrix(input.size(), 1);
+            for (int j = 0; j < input.size(); j++) {
+                inputMatrix.set(j, input.get(j));
+            }
+            data.add(inputMatrix);
+            answers.add(new SimpleMatrix(new double[]{outputs.get(i)}));
+        }
+
+        Double startTime = (double) (System.nanoTime() / 1000000000l);
+        Double currentTime = startTime;
+        while (currentTime < startTime + duration) {
+            train(data, answers, 100, 0.1d);
+            currentTime = (double) (System.nanoTime() / 1000000000l);
+        }
+    }
     
     /**
      * Training Method for the Network.
@@ -116,14 +216,14 @@ public class Network {
                     }
 
                     // log the training progress every 1000 epochs.
-                    if (epoch % 1000 == 0) {
+                    /* if (epoch % 1000 == 0) {
                         System.out.println(
                             String.format(
                                     "Epoch: %s | Learning Rate: %s | bestEpochLoss: %.15f | thisEpochLoss: %.15f", 
                                 epoch, learningRate, bestEpochLoss, thisEpochLoss
                             )
                         );
-                    }
+                    } */
                     
                     // increment the epoch counter.
                     epoch ++;

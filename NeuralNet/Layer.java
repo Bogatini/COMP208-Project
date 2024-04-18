@@ -83,6 +83,15 @@ public class Layer {
         return size;
     }
 
+    public List<SimpleMatrix> getValues() {
+        List<SimpleMatrix> values = new ArrayList<SimpleMatrix>();
+        values.add(biases);
+        values.add(weights);
+        values.add(biasGradients);
+        values.add(weightGradients);
+        return values;
+    }
+
     /* ************************************************************************************************ */
     /*                                     TRAINING METHODS                                             */
     /* ************************************************************************************************ */

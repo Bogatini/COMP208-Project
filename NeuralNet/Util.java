@@ -9,9 +9,14 @@ import org.ejml.simple.*;
 public class Util {
     public static String epochLog = "";
     
+    /**
+     * Method to convert an encoded string to a list of matrices to construct a layer.
+     * @param saveString a string read from a file, in the format "bias1 bias2 bias3 ... biasn|weight1a,weight1b,...,weight1x weight2a,...|..."
+     * @return A list of matrices, which are, in order, the biases, weights, bias gradients and weight gradients to be used for the layer.
+     */
     public static List<SimpleMatrix> decodeSaveString(String saveString) {
         List<SimpleMatrix> values = new ArrayList<SimpleMatrix>();
-        String[] matrixStrings = saveString.split("|");
+        String[] matrixStrings = saveString.split("\\|");
         String[] biasStrings = matrixStrings[0].split(" ");
         SimpleMatrix biases = new SimpleMatrix(biasStrings.length, 1);
         for (int i = 0; i < biasStrings.length; i++) {
@@ -43,7 +48,66 @@ public class Util {
         }
         values.add(weightGrads);
         return values;
-        
+    }
+
+    /**
+     * Method to convert matrices representing a layer to a string to be written to a file.
+     * @param values List containing the matrices: biases, weights, biasGradients and weightsGradients
+     * @return String, in the format "bias1 bias2 bias3 ... biasn|weight1a,weight1b,...,weight1x weight2a,...|..."
+     */
+    public static String encodeSaveString(List<SimpleMatrix> values) {
+        String saveString = new String("");
+
+        SimpleMatrix biases = values.get(0);
+        SimpleMatrix weights = values.get(1);
+        SimpleMatrix biasGradients = values.get(2);
+        SimpleMatrix weightGradients = values.get(3);
+
+        for (int i = 0; i < biases.getNumRows(); i++) {
+            saveString += String.valueOf(biases.get(i));
+            if (i < biases.getNumRows() - 1) {
+                saveString += " ";
+            }
+        }
+
+        saveString += "|";
+
+        for (int i = 0; i < weights.getNumRows(); i++) {
+            for (int j = 0; j < weights.getNumCols(); j++) {
+                saveString += String.valueOf(weights.get(i,j));
+                if (j < weights.getNumCols() - 1) {
+                    saveString += ",";
+                }
+            }
+            if (i < weights.getNumRows() - 1) {
+                saveString += " ";
+            }
+        }
+
+        saveString += "|";
+
+        for (int i = 0; i < biasGradients.getNumRows(); i++) {
+            saveString += String.valueOf(biasGradients.get(i));
+            if (i < biasGradients.getNumRows() - 1) {
+                saveString += " ";
+            }
+        }
+
+        saveString += "|";
+
+        for (int i = 0; i < weightGradients.getNumRows(); i++) {
+            for (int j = 0; j < weightGradients.getNumCols(); j++) {
+                saveString += String.valueOf(weightGradients.get(i,j));
+                if (j < weightGradients.getNumCols() - 1) {
+                    saveString += ",";
+                }
+            }
+            if (i < weightGradients.getNumRows() - 1) {
+                saveString += " ";
+            }
+        }
+
+        return saveString;
     }
     
     public static void printVector(SimpleMatrix vector) {

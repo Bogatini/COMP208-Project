@@ -246,6 +246,11 @@ public class Network {
         return outputLayer.compute(inputs, print);
     }
 
+    /**
+     * Predicts the difficulty of a puzzle, using the network.
+     * @param input Double[]
+     * @return String representing the difficulty: "Trivial", "Easy", "Intermediate", "Challenging", or "Hard"
+     */
     public String predict(Double[] input) {
         SimpleMatrix inputMatrix = new SimpleMatrix(input.length, 1);
         for (int i = 0; i < input.length; i++) {

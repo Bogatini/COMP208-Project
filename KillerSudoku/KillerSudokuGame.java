@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 
 public class KillerSudokuGame extends JFrame {
     private static final int GRID_SIZE = 9;
-    private static final int CELL_SIZE = 90;
+    private static final int CELL_SIZE = 80;
     private static final int SUBGRID_SIZE = 3;
     private static final int CANVAS_WIDTH = GRID_SIZE * CELL_SIZE;
     private static final int CANVAS_HEIGHT = GRID_SIZE * CELL_SIZE;
@@ -25,18 +25,22 @@ public class KillerSudokuGame extends JFrame {
         setTitle("Killer Sudoku");
         setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout(GRID_SIZE + 1, GRID_SIZE + 1));
-        initializeCells();
+        setLayout(new BorderLayout());
+        JPanel centerPanel = new JPanel(new GridLayout(GRID_SIZE + 1, GRID_SIZE + 1));
+        initializeCells(centerPanel);
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         generateSudoku();
         defineCages();
         displayCageSums();
         applyBorders();
-        addCheckButton();
+        add(centerPanel, BorderLayout.CENTER);
+        addCheckButton(bottomPanel);
+        add(bottomPanel, BorderLayout.SOUTH);
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    private void initializeCells() {
+    private void initializeCells(JPanel centerPanel) {
         for (int row = 0; row < GRID_SIZE; row++) {
             for (int col = 0; col < GRID_SIZE; col++) {
                 cells[row][col] = new DottedTextField();
@@ -50,7 +54,7 @@ public class KillerSudokuGame extends JFrame {
                         break;
                     }
                 }
-                add(cells[row][col]);
+                centerPanel.add(cells[row][col]);
             }
         }
     }
@@ -186,9 +190,8 @@ public class KillerSudokuGame extends JFrame {
         }
     }
 
-    private void addCheckButton() {
+    private void addCheckButton(JPanel bottomPanel) {
         JButton checkButton = new JButton("Check");
-        checkButton.setPreferredSize(new Dimension(CELL_SIZE * 2, CELL_SIZE * 2));
         checkButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -200,7 +203,7 @@ public class KillerSudokuGame extends JFrame {
                 }
             }
         });
-        add(checkButton);
+        bottomPanel.add(checkButton);
     }
 
     private boolean checkSolution() {

@@ -18,6 +18,8 @@ public class KillerSudokuGame extends JFrame {
     private static final int SUBGRID_SIZE = 3;
     private static final int CANVAS_WIDTH = GRID_SIZE * CELL_SIZE;
     private static final int CANVAS_HEIGHT = GRID_SIZE * CELL_SIZE;
+    private Timer timer;
+    private JLabel timerLabel;
 
     private final DottedTextField[][] cells = new DottedTextField[GRID_SIZE][GRID_SIZE];
     private final int[][] grid = new int[GRID_SIZE][GRID_SIZE];
@@ -58,6 +60,8 @@ public class KillerSudokuGame extends JFrame {
         add(centerPanel, BorderLayout.CENTER);
         addCheckButton(bottomPanel);
         add(bottomPanel, BorderLayout.SOUTH);
+        addTimerLabel(bottomPanel);
+        startTimer();
         setLocationRelativeTo(null);
         setVisible(true);
 
@@ -69,20 +73,30 @@ public class KillerSudokuGame extends JFrame {
                 new Color(173, 216, 230), // Pastel blue
                 new Color(152, 251, 152), // Pastel green
                 new Color(255, 182, 193), // Pastel pink
-                new Color(221, 160, 221) // Pastel purple
+                new Color(221, 160, 221), // Pastel purple
+                new Color(255, 204, 153) // Pastel orange
         };
         Random random = new Random();
+
+        // Shuffle the colors to randomize selection
         List<Color> shuffledColors = Arrays.asList(pastelColors);
         Collections.shuffle(shuffledColors);
 
         // Iterate over the shuffled colors to find a suitable color
         for (Color color : shuffledColors) {
+            boolean colorUsed = false;
+
             // Check if the color is already used by neighboring cells or cages
-            if (!usedColors.contains(color) && !hasSameColorNeighbor(neighbors, color)) {
-                // Return the color if it's not used by any neighboring cells or cages
+            if (usedColors.contains(color) || hasSameColorNeighbor(neighbors, color)) {
+                colorUsed = true;
+            }
+
+            // Return the color if it's not used by any neighboring cells
+            if (!colorUsed) {
                 return color;
             }
         }
+
         // If no suitable color is found, choose a random color
         return pastelColors[random.nextInt(pastelColors.length)];
     }
@@ -110,7 +124,7 @@ public class KillerSudokuGame extends JFrame {
 
     private boolean hasSameColorNeighbor(List<Point> neighbors, Color color) {
         for (Point neighbor : neighbors) {
-            // Check if the neighboring cell or cage has the same color
+            // Check if the neighboring cell has the same color
             int row = neighbor.x;
             int col = neighbor.y;
             if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE) {
@@ -130,10 +144,16 @@ public class KillerSudokuGame extends JFrame {
                 cells[row][col].setEditable(true);
                 cells[row][col].setHorizontalAlignment(JTextField.CENTER);
                 cells[row][col].setFont(new Font("SansSerif", Font.BOLD, 20));
+
                 // Set the cage information for each cell
                 for (List<Point> cage : cages.keySet()) {
                     if (cage.contains(new Point(row, col))) {
                         cells[row][col].setCage(cage);
+                        if (cage.get(0).equals(new Point(row, col))) {
+                            // If this cell is the top left cell of the cage, add the sumLabel
+                            cells[row][col].setLayout(new BorderLayout());
+                            cells[row][col].add(cells[row][col].getSumLabel(), BorderLayout.NORTH);
+                        }
                         break;
                     }
                 }
@@ -301,6 +321,7 @@ public class KillerSudokuGame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (checkSolution()) {
+                    timer.stop();
                     JOptionPane.showMessageDialog(KillerSudokuGame.this, "Congratulations! Your solution is correct.");
                 } else {
                     JOptionPane.showMessageDialog(KillerSudokuGame.this,
@@ -309,6 +330,26 @@ public class KillerSudokuGame extends JFrame {
             }
         });
         bottomPanel.add(checkButton);
+    }
+
+    private void addTimerLabel(JPanel bottomPanel) {
+        timerLabel = new JLabel("Time: 00:00");
+        bottomPanel.add(timerLabel);
+    }
+
+    private void startTimer() {
+        timer = new Timer(1000, new ActionListener() {
+            int seconds = 0;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                seconds++;
+                int mins = seconds / 60;
+                int secs = seconds % 60;
+                timerLabel.setText(String.format("Time: %02d:%02d", mins, secs));
+            }
+        });
+        timer.start();
     }
 
     private boolean checkSolution() {
@@ -382,19 +423,19 @@ public class KillerSudokuGame extends JFrame {
         return true;
     }
 
-    private void printSolution() {
-        System.out.println("Killer Sudoku Solution:");
-        for (int i = 0; i < GRID_SIZE; i++) {
-            for (int j = 0; j < GRID_SIZE; j++) {
-                System.out.print(grid[i][j] + " ");
-            }
-            System.out.println();
-        }
-    }
+    // private void printSolution() {
+    // System.out.println("Killer Sudoku Solution:");
+    // for (int i = 0; i < GRID_SIZE; i++) {
+    // for (int j = 0; j < GRID_SIZE; j++) {
+    // System.out.print(grid[i][j] + " ");
+    // }
+    // System.out.println();
+    // }
+    // }
 
     public static void main(String[] args) {
-        // SwingUtilities.invokeLater(KillerSudokuGame::new);
-        KillerSudokuGame game = new KillerSudokuGame();
-        SwingUtilities.invokeLater(game::printSolution);
+        SwingUtilities.invokeLater(KillerSudokuGame::new);
+        // KillerSudokuGame game = new KillerSudokuGame();
+        // SwingUtilities.invokeLater(game::printSolution);
     }
 }

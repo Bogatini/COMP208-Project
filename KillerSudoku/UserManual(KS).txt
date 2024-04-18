@@ -2,5 +2,6 @@ Rules of Killer Sudoku:
 Fill all rows, columns and 3x3 region with numbers exactly like in regular sudoku.
 Every cell is a part of a cage, indicated by colors.
 Make sure the cells can be added up to the sum of its cage.
+Cells with no colour means that it is not binded by a cage.
 Numbers cannot repeat within cages.
 Numbers cannot repeat within a single row, column or 3x3 region.

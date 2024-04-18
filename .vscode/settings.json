@@ -1,24 +1,23 @@
 {
-    "java.project.referencedLibraries": [
-        "lib/**/*.jar",
-        "ejml-simple-0.42.jar",
-        "ejml-core-0.42.jar",
-        "ejml-ddense-0.42.jar",
-        "NeuralNet/EJML/ejml-cdense-0.42-sources.jar",
-        "NeuralNet/EJML/ejml-cdense-0.42.jar",
-        "NeuralNet/EJML/ejml-core-0.42-sources.jar",
-        "NeuralNet/EJML/ejml-core-0.42.jar",
-        "NeuralNet/EJML/ejml-ddense-0.42-sources.jar",
-        "NeuralNet/EJML/ejml-ddense-0.42.jar",
-        "NeuralNet/EJML/ejml-dsparse-0.42-sources.jar",
-        "NeuralNet/EJML/ejml-dsparse-0.42.jar",
-        "NeuralNet/EJML/ejml-experimental-0.42-sources.jar",
-        "NeuralNet/EJML/ejml-experimental-0.42.jar",
-        "NeuralNet/EJML/ejml-fdense-0.42-sources.jar",
-        "NeuralNet/EJML/ejml-fdense-0.42.jar",
-        "NeuralNet/EJML/ejml-simple-0.42-sources.jar",
-        "NeuralNet/EJML/ejml-simple-0.42.jar",
-        "NeuralNet/EJML/ejml-zdense-0.42-sources.jar",
-        "NeuralNet/EJML/ejml-zdense-0.42.jar"
-    ]
+    "java.project.referencedLibraries": {
+        "include": [
+            "lib/**/*.jar",
+            "EJML/ejml-cdense-0.42-sources.jar",
+            "EJML/ejml-cdense-0.42.jar",
+            "EJML/ejml-core-0.42-sources.jar",
+            "EJML/ejml-core-0.42.jar",
+            "EJML/ejml-ddense-0.42-sources.jar",
+            "EJML/ejml-ddense-0.42.jar",
+            "EJML/ejml-dsparse-0.42-sources.jar",
+            "EJML/ejml-dsparse-0.42.jar",
+            "EJML/ejml-experimental-0.42-sources.jar",
+            "EJML/ejml-experimental-0.42.jar",
+            "EJML/ejml-fdense-0.42-sources.jar",
+            "EJML/ejml-fdense-0.42.jar",
+            "EJML/ejml-simple-0.42-sources.jar",
+            "EJML/ejml-simple-0.42.jar",
+            "EJML/ejml-zdense-0.42-sources.jar",
+            "EJML/ejml-zdense-0.42.jar"
+        ],
+    }
 }

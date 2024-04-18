@@ -12,7 +12,7 @@ import java.awt.event.ActionListener;
 
 public class KillerSudokuGame extends JFrame {
     private static final int GRID_SIZE = 9;
-    private static final int CELL_SIZE = 60;
+    private static final int CELL_SIZE = 90;
     private static final int SUBGRID_SIZE = 3;
     private static final int CANVAS_WIDTH = GRID_SIZE * CELL_SIZE;
     private static final int CANVAS_HEIGHT = GRID_SIZE * CELL_SIZE;
@@ -32,6 +32,7 @@ public class KillerSudokuGame extends JFrame {
         displayCageSums();
         applyBorders();
         addCheckButton();
+        setLocationRelativeTo(null);
         setVisible(true);
     }
 
@@ -187,6 +188,7 @@ public class KillerSudokuGame extends JFrame {
 
     private void addCheckButton() {
         JButton checkButton = new JButton("Check");
+        checkButton.setPreferredSize(new Dimension(CELL_SIZE * 2, CELL_SIZE * 2));
         checkButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -281,7 +283,10 @@ public class KillerSudokuGame extends JFrame {
             System.out.println();
         }
     }
+
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(KillerSudokuGame::new);
+        // SwingUtilities.invokeLater(KillerSudokuGame::new);
+        KillerSudokuGame game = new KillerSudokuGame();
+        SwingUtilities.invokeLater(game::printSolution);
     }
 }

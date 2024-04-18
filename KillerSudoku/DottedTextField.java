@@ -13,7 +13,7 @@ public class DottedTextField extends JTextField {
         dotColor = Color.BLACK;
         setOpaque(false);
         sumLabel = new JLabel();
-        sumLabel.setFont(new Font("Serif", Font.BOLD, 10)); // Adjust font size and style as needed
+        sumLabel.setFont(new Font("Serif", Font.BOLD, 15)); // Adjust font size and style as needed
         sumLabel.setForeground(Color.RED); // Adjust color as needed
         setLayout(new BorderLayout());
         add(sumLabel, BorderLayout.NORTH);

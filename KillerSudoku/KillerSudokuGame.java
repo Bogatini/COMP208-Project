@@ -2,7 +2,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +33,26 @@ public class KillerSudokuGame extends JFrame {
         generateSudoku();
         defineCages();
         initializeCells(centerPanel);
+        Map<Integer, Color> cageColors = new HashMap<>();
+        List<Color> usedColors = new ArrayList<>(); // Create an empty list to keep track of used colors
+        for (Map.Entry<List<Point>, Integer> entry : cages.entrySet()) {
+            List<Point> cage = entry.getKey(); // Generate unique ID for each cage
+            List<Point> neighbors = getNeighbors(cage);
+            Color cageColor = getRandomColor(usedColors, neighbors); // Get a random color for each cage
+            cageColors.put(System.identityHashCode(cage), cageColor);
+            usedColors.add(cageColor); // Add the used color to the list
+        }
+        for (Map.Entry<List<Point>, Integer> entry : cages.entrySet()) {
+            List<Point> cage = entry.getKey();
+            int cageId = System.identityHashCode(cage); // Get the cage ID
+            Color cageColor = cageColors.get(cageId); // Retrieve color for this cage ID
+            for (Point p : cage) {
+                int row = p.x;
+                int col = p.y;
+                cells[row][col].setCage(cage);
+                cells[row][col].setBackground(cageColor);
+            }
+        }
         displayCageSums();
         applyBorders();
         add(centerPanel, BorderLayout.CENTER);
@@ -39,6 +61,61 @@ public class KillerSudokuGame extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
 
+    }
+
+    private Color getRandomColor(List<Color> usedColors, List<Point> neighbors) {
+        Color[] pastelColors = {
+                new Color(255, 255, 153), // Pastel yellow
+                new Color(173, 216, 230), // Pastel blue
+                new Color(152, 251, 152), // Pastel green
+                new Color(255, 182, 193), // Pastel pink
+                new Color(221, 160, 221) // Pastel purple
+        };
+        Random random = new Random();
+        List<Color> shuffledColors = Arrays.asList(pastelColors);
+        Collections.shuffle(shuffledColors);
+
+        // Iterate over the shuffled colors to find a suitable color
+        for (Color color : shuffledColors) {
+            // Check if the color is already used by neighboring cells or cages
+            if (!usedColors.contains(color) && !hasSameColorNeighbor(neighbors, color)) {
+                // Return the color if it's not used by any neighboring cells or cages
+                return color;
+            }
+        }
+        // If no suitable color is found, choose a random color
+        return pastelColors[random.nextInt(pastelColors.length)];
+    }
+
+    private List<Point> getNeighbors(List<Point> cage) {
+        Set<Point> neighbors = new HashSet<>();
+        for (Point p : cage) {
+            int x = p.x;
+            int y = p.y;
+            if (x > 0) {
+                neighbors.add(new Point(x - 1, y)); // Left
+            }
+            if (x < GRID_SIZE - 1) {
+                neighbors.add(new Point(x + 1, y)); // Right
+            }
+            if (y > 0) {
+                neighbors.add(new Point(x, y - 1)); // Up
+            }
+            if (y < GRID_SIZE - 1) {
+                neighbors.add(new Point(x, y + 1)); // Down
+            }
+        }
+        return new ArrayList<>(neighbors);
+    }
+
+    private boolean hasSameColorNeighbor(List<Point> neighbors, Color color) {
+        for (Point neighbor : neighbors) {
+            // Check if the neighboring cell or cage has the same color
+            if (cells[neighbor.x][neighbor.y].getBackground().equals(color)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void initializeCells(JPanel centerPanel) {
@@ -130,14 +207,56 @@ public class KillerSudokuGame extends JFrame {
         while (!availablePoints.isEmpty()) {
             List<Point> thisCage = new ArrayList<>();
             int sum = 0;
-            for (int i = 0; i < 3 && !availablePoints.isEmpty(); i++) {
-                Point p = availablePoints.remove(0);
-                thisCage.add(p);
-                sum += grid[p.x][p.y];
+            // Randomly determine the number of cells in this cage (2-3)
+            int cellsInCage = (int) (Math.random() * 2) + 2;
+
+            // Select a random starting point for the cage
+            Point startPoint = availablePoints.remove(0);
+            thisCage.add(startPoint);
+            sum += grid[startPoint.x][startPoint.y];
+
+            // Add adjacent cells to the cage until the desired number of cells is reached
+            while (thisCage.size() < cellsInCage) {
+                Point lastPoint = thisCage.get(thisCage.size() - 1);
+                List<Point> adjacentPoints = getAdjacentPoints(lastPoint);
+                Point nextPoint = null;
+                for (Point p : adjacentPoints) {
+                    if (availablePoints.contains(p)) {
+                        nextPoint = p;
+                        break;
+                    }
+                }
+                if (nextPoint != null) {
+                    availablePoints.remove(nextPoint);
+                    thisCage.add(nextPoint);
+                    sum += grid[nextPoint.x][nextPoint.y];
+                } else {
+                    break; // No more adjacent available points
+                }
             }
+
             cages.put(thisCage, sum);
             cageId++;
         }
+    }
+
+    private List<Point> getAdjacentPoints(Point point) {
+        int x = point.x;
+        int y = point.y;
+        List<Point> adjacentPoints = new ArrayList<>();
+        if (x > 0) {
+            adjacentPoints.add(new Point(x - 1, y)); // Left
+        }
+        if (x < GRID_SIZE - 1) {
+            adjacentPoints.add(new Point(x + 1, y)); // Right
+        }
+        if (y > 0) {
+            adjacentPoints.add(new Point(x, y - 1)); // Up
+        }
+        if (y < GRID_SIZE - 1) {
+            adjacentPoints.add(new Point(x, y + 1)); // Down
+        }
+        return adjacentPoints;
     }
 
     private void displayCageSums() {

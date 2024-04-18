@@ -27,10 +27,10 @@ public class KillerSudokuGame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         JPanel centerPanel = new JPanel(new GridLayout(GRID_SIZE + 1, GRID_SIZE + 1));
-        initializeCells(centerPanel);
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         generateSudoku();
         defineCages();
+        initializeCells(centerPanel);
         displayCageSums();
         applyBorders();
         add(centerPanel, BorderLayout.CENTER);
@@ -38,6 +38,7 @@ public class KillerSudokuGame extends JFrame {
         add(bottomPanel, BorderLayout.SOUTH);
         setLocationRelativeTo(null);
         setVisible(true);
+
     }
 
     private void initializeCells(JPanel centerPanel) {
@@ -170,20 +171,14 @@ public class KillerSudokuGame extends JFrame {
             for (int row = topRow; row <= bottomRow; row++) {
                 for (int col = leftCol; col <= rightCol; col++) {
                     JTextField cell = cells[row][col];
-                    if (row == topRow || row == bottomRow || col == leftCol || col == rightCol) {
-                        cell.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1)); // Change color for cage borders
-                    } else {
-                        int top = (row == 0 || row % SUBGRID_SIZE == 0) ? 2 : 1;
-                        int left = (col == 0 || col % SUBGRID_SIZE == 0) ? 2 : 1;
-                        int bottom = (row == GRID_SIZE - 1 || (row + 1) % SUBGRID_SIZE == 0) ? 2 : 1;
-                        int right = (col == GRID_SIZE - 1 || (col + 1) % SUBGRID_SIZE == 0) ? 2 : 1;
+                    int top = (row == 0 || row % SUBGRID_SIZE == 0) ? 2 : 1;
+                    int left = (col == 0 || col % SUBGRID_SIZE == 0) ? 2 : 1;
+                    int bottom = ((row + 1) % SUBGRID_SIZE == 0 || row == GRID_SIZE + 1) ? 2 : 1;
+                    int right = ((col + 1) % SUBGRID_SIZE == 0 || col == GRID_SIZE + 1) ? 2 : 1;
 
-                        // Apply thick black lines for 3x3 grid borders
-                        if (top == 2 || left == 2 || bottom == 2 || right == 2) {
-                            cell.setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.BLACK));
-                        } else {
-                            cell.setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.LIGHT_GRAY));
-                        }
+                    // Apply thick black lines for 3x3 grid borders
+                    if (top == 1 || left == 1 || bottom == 1 || right == 1) {
+                        cell.setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.BLACK));
                     }
                 }
             }

@@ -25,7 +25,7 @@ public class KillerSudokuGame extends JFrame {
         setTitle("Killer Sudoku");
         setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout(GRID_SIZE, GRID_SIZE));
+        setLayout(new GridLayout(GRID_SIZE + 1, GRID_SIZE + 1));
         initializeCells();
         generateSudoku();
         defineCages();
@@ -207,8 +207,16 @@ public class KillerSudokuGame extends JFrame {
             Set<Integer> rowSet = new HashSet<>();
             Set<Integer> colSet = new HashSet<>();
             for (int j = 0; j < GRID_SIZE; j++) {
-                int rowCellValue = Integer.parseInt(cells[i][j].getText().trim());
-                int colCellValue = Integer.parseInt(cells[j][i].getText().trim());
+                String rowText = cells[i][j].getText().trim();
+                String colText = cells[j][i].getText().trim();
+
+                // Check if cell text is empty
+                if (rowText.isEmpty() || colText.isEmpty()) {
+                    return false;
+                }
+
+                int rowCellValue = Integer.parseInt(rowText);
+                int colCellValue = Integer.parseInt(colText);
                 if (rowCellValue < 1 || rowCellValue > 9 || colCellValue < 1 || colCellValue > 9 ||
                         rowSet.contains(rowCellValue) || colSet.contains(colCellValue)) {
                     return false;
@@ -224,7 +232,14 @@ public class KillerSudokuGame extends JFrame {
                 Set<Integer> subgridSet = new HashSet<>();
                 for (int i = startRow; i < startRow + SUBGRID_SIZE; i++) {
                     for (int j = startCol; j < startCol + SUBGRID_SIZE; j++) {
-                        int subgridCellValue = Integer.parseInt(cells[i][j].getText().trim());
+                        String subgridText = cells[i][j].getText().trim();
+
+                        // Check if cell text is empty
+                        if (subgridText.isEmpty()) {
+                            return false;
+                        }
+
+                        int subgridCellValue = Integer.parseInt(subgridText);
                         if (subgridCellValue < 1 || subgridCellValue > 9 || subgridSet.contains(subgridCellValue)) {
                             return false;
                         }
@@ -240,7 +255,14 @@ public class KillerSudokuGame extends JFrame {
             int sum = entry.getValue();
             int cageSum = 0;
             for (Point p : cagePoints) {
-                cageSum += Integer.parseInt(cells[p.x][p.y].getText().trim());
+                String cageText = cells[p.x][p.y].getText().trim();
+
+                // Check if cell text is empty
+                if (cageText.isEmpty()) {
+                    return false;
+                }
+
+                cageSum += Integer.parseInt(cageText);
             }
             if (cageSum != sum) {
                 return false;
@@ -250,6 +272,15 @@ public class KillerSudokuGame extends JFrame {
         return true;
     }
 
+    private void printSolution() {
+        System.out.println("Killer Sudoku Solution:");
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                System.out.print(grid[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(KillerSudokuGame::new);
     }

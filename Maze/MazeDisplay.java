@@ -7,11 +7,9 @@ public class MazeDisplay extends JFrame {
 
     private final int CELL_SIZE = 50;
 
-    public void updateMaze(String[][] maze) {
-        this.MAZE = maze;
-        repaint(); // Refresh the display
-    }
-
+    /**
+     * Constructor that handles creating an output window for the maze
+     */
     public MazeDisplay(String[][] maze) {
         this.MAZE = maze;
         setTitle("Maze Display");
@@ -23,9 +21,25 @@ public class MazeDisplay extends JFrame {
         setVisible(true); // Make the frame visible
     }
 
-    class MazePanel extends JPanel {
-        private static final int CELL_SIZE = 50;
+    /**
+     * updates the maze being displayed inside MazeDisplay's window
+     * @param   maze the new maze to be shown 
+     */
+    public void updateMaze(String[][] newMaze) {
+        this.MAZE = newMaze;
+        repaint(); // Refresh the display
+    }
 
+    /**
+     * Constructor for a panel in that will be shown in the window
+     * This could be in it's own file, but it is just used to override two methods in JPanel
+     */
+    class MazePanel extends JPanel {
+        /**
+         * colours every panel in the maze the correct colour, depending on 
+         * what symbol is in the position in the 2D array MAZE
+         * @param   g the Graphics object inside the panel that handles how it looks
+         */
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -49,6 +63,11 @@ public class MazeDisplay extends JFrame {
             }
         }
 
+        /**
+         * ensures that when this function is called, the size of each cell is taken into account
+         * if the normal function is used the grid is tiny as the minimum size for each panel is used
+         * @param   Dimension the height and width of the window 
+         */
         @Override
         public Dimension getPreferredSize() {
             return new Dimension(MAZE[0].length * CELL_SIZE, MAZE.length * CELL_SIZE);

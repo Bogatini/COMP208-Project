@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-//import java.util.Arrays;
 
 public class MazeCreator extends JFrame {
 
@@ -15,22 +14,11 @@ public class MazeCreator extends JFrame {
     private boolean continueFlag = false;
     private String[][] MAZE;
 
-    public String[][] getMaze() {
-        return MAZE;
-    }
-    public boolean getContinueFlag() {
-        return continueFlag;
-    }
-
-    private void printMaze() {
-        for (int i = 0; i< MAZE.length; i++) {
-            for (int j = 0; j< MAZE[i].length; j++) {
-                System.out.print(MAZE[i][j] + ", ");
-            }
-            System.out.print("\n");
-        }
-    }
-
+    /**
+     * Constructor that creates the input window for the user
+     * @param   rows number of rows in the grid
+     * @param   cols number of columns in the grid
+    */
     public MazeCreator(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
@@ -47,6 +35,13 @@ public class MazeCreator extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * Creates an empty grid of buttons the user can click on to draw a maze
+     * Clicking a button changes it appearance and reflects this change in the array representing the maze
+     * "W" is a wall represented in black
+     * " " is an empty space represented in white
+     * Three mouse listener functions are used here to allow the user to click and drag to select buttons
+    */
     private void initializeGrid() {
         for (int y = 0; y < rows; y++) {
             for (int x = 0; x < cols; x++) {
@@ -55,7 +50,7 @@ public class MazeCreator extends JFrame {
                 button.setBackground(Color.WHITE);
                 button.setOpaque(true);
                 button.setBorderPainted(false);
-                final int finalY = y; // Need to make final to use in button class (this might be really bad)
+                final int finalY = y; // need to make final to use in button's mouse listener
                 final int finalX = x;
                 button.addMouseListener(new MouseAdapter() {
                     @Override
@@ -100,8 +95,11 @@ public class MazeCreator extends JFrame {
         }
     }
 
+    /**
+     * Adds a button at the bottom of the maze that lets the user finish editing the maze
+    */
     private void addPrintButton() {
-        JButton printButton = new JButton("Print Maze");
+        JButton printButton = new JButton("Finish Maze");
         printButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -112,8 +110,19 @@ public class MazeCreator extends JFrame {
         add(printButton);
     }
 
-    // just for testing purposes, should never be run
-    public static void main(String[] args) {
-        new MazeCreator(10, 10); // Adjust the dimensions of the maze grid
+    public String[][] getMaze() {
+        return MAZE;
+    }
+    public boolean getContinueFlag() {
+        return continueFlag;
+    }
+
+    private void printMaze() {
+        for (int i = 0; i< MAZE.length; i++) {
+            for (int j = 0; j< MAZE[i].length; j++) {
+                System.out.print(MAZE[i][j] + ", ");
+            }
+            System.out.print("\n");
+        }
     }
 }

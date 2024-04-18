@@ -202,8 +202,9 @@ public class MathsGridPuzzle extends JFrame {
                     // end the game and timer and add the starting data and time taken to training data array
                     timer.stop();
                     double elapsedTimeDouble = (double) elapsedTime;
+                    double elapsedTimeSecondsDouble = elapsedTimeDouble/1000;
                     setNNValues(answerFields);
-                    neuralNetworkInterface.addTrainingData(NNArray, elapsedTimeDouble);
+                    neuralNetworkInterface.addTrainingData(NNArray, elapsedTimeSecondsDouble);
 
                     JOptionPane.showMessageDialog(MathsGridPuzzle.this, "All equations are correct!\n" + elapsedTime + " seconds taken");
                     dispose(); // this closes the program

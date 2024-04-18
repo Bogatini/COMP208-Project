@@ -111,8 +111,13 @@ public class KillerSudokuGame extends JFrame {
     private boolean hasSameColorNeighbor(List<Point> neighbors, Color color) {
         for (Point neighbor : neighbors) {
             // Check if the neighboring cell or cage has the same color
-            if (cells[neighbor.x][neighbor.y].getBackground().equals(color)) {
-                return true;
+            int row = neighbor.x;
+            int col = neighbor.y;
+            if (row >= 0 && row < GRID_SIZE && col >= 0 && col < GRID_SIZE) {
+                Color neighborColor = cells[row][col].getBackground();
+                if (neighborColor.equals(color)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -207,8 +212,8 @@ public class KillerSudokuGame extends JFrame {
         while (!availablePoints.isEmpty()) {
             List<Point> thisCage = new ArrayList<>();
             int sum = 0;
-            // Randomly determine the number of cells in this cage (2-3)
-            int cellsInCage = (int) (Math.random() * 2) + 2;
+            // Randomly determine the number of cells in this cage (2 or 3)
+            int cellsInCage = Math.random() < 0.5 ? 2 : 3;
 
             // Select a random starting point for the cage
             Point startPoint = availablePoints.remove(0);
@@ -235,7 +240,11 @@ public class KillerSudokuGame extends JFrame {
                 }
             }
 
-            cages.put(thisCage, sum);
+            // Check if the cage has more than one cell
+            if (thisCage.size() > 1) {
+                cages.put(thisCage, sum);
+            }
+
             cageId++;
         }
     }
@@ -272,34 +281,16 @@ public class KillerSudokuGame extends JFrame {
 
     private void applyBorders() {
         // Apply custom dashed borders to cage boundaries
-        for (List<Point> cageCells : cages.keySet()) {
-            int topRow = Integer.MAX_VALUE;
-            int bottomRow = Integer.MIN_VALUE;
-            int leftCol = Integer.MAX_VALUE;
-            int rightCol = Integer.MIN_VALUE;
+        for (int row = 0; row < GRID_SIZE; row++) {
+            for (int col = 0; col < GRID_SIZE; col++) {
+                JTextField cell = cells[row][col];
+                int top = (row % SUBGRID_SIZE == 0) ? 2 : 1;
+                int left = (col % SUBGRID_SIZE == 0) ? 2 : 1;
+                int bottom = ((row + 1) % SUBGRID_SIZE == 0 || row == GRID_SIZE - 1) ? 2 : 1;
+                int right = ((col + 1) % SUBGRID_SIZE == 0 || col == GRID_SIZE - 1) ? 2 : 1;
 
-            // Determine the boundaries of the cage
-            for (Point p : cageCells) {
-                topRow = Math.min(topRow, p.x);
-                bottomRow = Math.max(bottomRow, p.x);
-                leftCol = Math.min(leftCol, p.y);
-                rightCol = Math.max(rightCol, p.y);
-            }
-
-            // Apply border to the surrounding cells of the cage
-            for (int row = topRow; row <= bottomRow; row++) {
-                for (int col = leftCol; col <= rightCol; col++) {
-                    JTextField cell = cells[row][col];
-                    int top = (row == 0 || row % SUBGRID_SIZE == 0) ? 2 : 1;
-                    int left = (col == 0 || col % SUBGRID_SIZE == 0) ? 2 : 1;
-                    int bottom = ((row + 1) % SUBGRID_SIZE == 0 || row == GRID_SIZE + 1) ? 2 : 1;
-                    int right = ((col + 1) % SUBGRID_SIZE == 0 || col == GRID_SIZE + 1) ? 2 : 1;
-
-                    // Apply thick black lines for 3x3 grid borders
-                    if (top == 1 || left == 1 || bottom == 1 || right == 1) {
-                        cell.setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.BLACK));
-                    }
-                }
+                // Apply border lines
+                cell.setBorder(BorderFactory.createMatteBorder(top, left, bottom, right, Color.BLACK));
             }
         }
     }

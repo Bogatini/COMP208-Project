@@ -37,16 +37,15 @@ public class Network {
      * @param numberOfInputs The number of inputs to the network.
      */
     public Network(String fileName, int numberOfInputs) {
+        trainingFile = new File(FOLDER + fileName + "TrainingSet.txt");
         try {
             networkFile = new File(FOLDER + fileName + ".txt");
             if (networkFile.createNewFile()) {
                 System.out.println("Creating New Network.");
-                trainingFile = new File(FOLDER + fileName + "TrainingSet.txt");
                 layers.add(new Layer(numberOfInputs));
-                for (int i = 1; i < 4; i++) {
-                    layers.add(new Layer(layers.get(i-1), 4));
-                }
-                outputLayer = layers.get(3);
+                layers.add(new Layer(layers.get(layers.size() - 1), 4));
+                layers.add(new Layer(layers.get(layers.size() - 1), 4));
+                layers.add(new Layer(layers.get(layers.size() - 1), 1));
             } else {
                 System.out.println("Network Save Found.");
                 Scanner sc = new Scanner(networkFile);
@@ -54,15 +53,18 @@ public class Network {
                 while (sc.hasNextLine()) {
                     layerValues.add(Util.decodeSaveString(sc.nextLine()));
                 }
+                System.out.println("Read in " + layerValues.size() + " layers.");
                 sc.close();
                 layers.add(new Layer(numberOfInputs));
-                for (int i = 1; i < layerValues.size(); i++) {
+                for (int i = 1; i <= layerValues.size(); i++) {
                     layers.add(new Layer(layerValues.get(i-1), layers.get(i-1)));
                 }
+                System.out.println("Created " + layers.size() + " layers.");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        outputLayer = layers.get(layers.size() - 1);
     }
     
     /**
@@ -71,13 +73,11 @@ public class Network {
     public void save() {
         try {
             FileWriter wr = new FileWriter(networkFile, false);
+            System.out.println("Network has " + layers.size() + " layers.");
             for (int i = 1; i < layers.size(); i++) {
                 String layerString = Util.encodeSaveString(layers.get(i).getValues());
-                wr.write(layerString);
+                wr.write(layerString + "\n");
                 System.out.println("Wrote to file:\n" + layerString);
-                if (i < layers.size() - 1) {
-                    wr.write("\n");
-                }
             }
             wr.close();
             
@@ -133,6 +133,7 @@ public class Network {
                 for (int i = 0; i < splitString.length - 1; i++) {
                     input.add(Double.parseDouble(splitString[i]));
                 }
+                inputs.add(input);
                 outputs.add(Double.parseDouble(splitString[splitString.length-1]));
             }
             sc.close();
@@ -149,9 +150,12 @@ public class Network {
             for (int j = 0; j < input.size(); j++) {
                 inputMatrix.set(j, input.get(j));
             }
+            inputMatrix.print();
             data.add(inputMatrix);
             answers.add(new SimpleMatrix(new double[]{outputs.get(i)}));
         }
+
+        System.out.println("Loaded " + data.size() + "training examples, with " + answers.size() + "answers.");
 
         Double startTime = (double) (System.nanoTime() / 1000000000l);
         Double currentTime = startTime;
@@ -181,7 +185,6 @@ public class Network {
 
         // calculate the loss of this version of the network.
         Double bestEpochLoss = Util.meanSquareLoss(answers, predictions);
-        System.out.println("Loss before training: " + bestEpochLoss);
 
         // repeat until epochCount hit.
         while (epoch < epochCount) {
@@ -230,16 +233,6 @@ public class Network {
                 }
             }
         }
-
-        // test the final performance of the network.
-        predictions = new ArrayList<SimpleMatrix>();
-        for (int i = 0; i < data.size(); i++) {
-            predictions.add(predict(data.get(i), false));
-        }
-        
-        // calculate the loss of this version of the network.
-        Double finalLoss = Util.meanSquareLoss(answers, predictions);
-        System.out.println("Loss after training: " + finalLoss);
     }
     
     
@@ -251,5 +244,25 @@ public class Network {
      */
     public SimpleMatrix predict(SimpleMatrix inputs, boolean print) {
         return outputLayer.compute(inputs, print);
+    }
+
+    public String predict(Double[] input) {
+        SimpleMatrix inputMatrix = new SimpleMatrix(input.length, 1);
+        for (int i = 0; i < input.length; i++) {
+            inputMatrix.set(i, input[i]);
+        }
+        SimpleMatrix prediction = predict(inputMatrix, false);
+        Double predictionValue = prediction.get(0);
+        if (predictionValue < 0.125d) {
+            return new String("Trivial");
+        } else if (predictionValue < 0.375d) {
+            return new String("Easy");
+        } else if (predictionValue < 0.625d) {
+            return new String("Intermediate");
+        } else if (predictionValue < 0.875d) {
+            return new String("Challenging");
+        } else {
+            return new String("Hard");
+        }
     }
 }

@@ -45,6 +45,9 @@ public class Layer {
         weights = values.get(1);
         biasGradients = values.get(2);
         weightGradients = values.get(3);
+
+        oldBiases = biases;
+        oldWeights = weights;
         
         size = biases.getNumRows();
     }

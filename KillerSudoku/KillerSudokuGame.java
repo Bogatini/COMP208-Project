@@ -13,19 +13,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class KillerSudokuGame extends JFrame {
+    private Network neuralNetwork;
     private static final int GRID_SIZE = 9;
     private static final int CELL_SIZE = 80;
     private static final int SUBGRID_SIZE = 3;
     private static final int CANVAS_WIDTH = GRID_SIZE * CELL_SIZE;
     private static final int CANVAS_HEIGHT = GRID_SIZE * CELL_SIZE;
     private Timer timer;
+    private long startTime;
     private JLabel timerLabel;
+    private JLabel difficultyLabel;
 
     private final DottedTextField[][] cells = new DottedTextField[GRID_SIZE][GRID_SIZE];
     private final int[][] grid = new int[GRID_SIZE][GRID_SIZE];
     private final Map<List<Point>, Integer> cages = new HashMap<>();
 
-    public KillerSudokuGame() {
+    public KillerSudokuGameNN() {
         setTitle("Killer Sudoku");
         setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -65,6 +68,37 @@ public class KillerSudokuGame extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
 
+        neuralNetwork = new Network("KillerSudoku", 81);
+        Double[] puzzleInputs = convertPuzzleToInputs(grid);
+        String difficulty = neuralNetwork.predict(puzzleInputs);
+        difficultyLabel = new JLabel("Difficulty: " + difficulty);
+        bottomPanel.add(difficultyLabel);
+    
+    }
+
+    private Double[] convertPuzzleToInputs(int[][] grid) {
+        Double[] inputs = new Double[81];
+        for (int i = 0; i < GRID_SIZE; i++) {
+            for (int j = 0; j < GRID_SIZE; j++) {
+                inputs[i * GRID_SIZE + j] = grid[i][j] != 0 ? grid[i][j] / 9.0 : 0.0; // Normalize non-zero cell values to [0, 1]
+            }
+        }
+        return inputs;
+    } 
+
+    private void puzzleCompleted(double timeTaken) {
+        // Assuming grid is the completed puzzle and timeTaken is the time taken by the player in seconds
+        Double[] puzzleInputs = convertPuzzleToInputs(grid);
+        neuralNetwork.addTrainingData(puzzleInputs, timeTaken); // Cast timeTaken to double
+    }
+
+    private void trainNetwork() {
+        // Train the network for 1 minutes (60 seconds)
+        neuralNetwork.train(60.0);
+    }
+
+    private void saveNetwork() {
+        neuralNetwork.save();
     }
 
     private Color getRandomColor(List<Color> usedColors, List<Point> neighbors) {
@@ -322,9 +356,11 @@ public class KillerSudokuGame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (checkSolution()) {
                     timer.stop();
-                    JOptionPane.showMessageDialog(KillerSudokuGame.this, "Congratulations! Your solution is correct.");
+                    double timeTaken = ((System.currentTimeMillis() - startTime) / 1000);
+                    puzzleCompleted(timeTaken);
+                    JOptionPane.showMessageDialog(KillerSudokuGameNN.this, "Congratulations! Your solution is correct.");
                 } else {
-                    JOptionPane.showMessageDialog(KillerSudokuGame.this,
+                    JOptionPane.showMessageDialog(KillerSudokuGameNN.this,
                             "Sorry, your solution is incorrect. Please try again.");
                 }
             }
@@ -338,6 +374,7 @@ public class KillerSudokuGame extends JFrame {
     }
 
     private void startTimer() {
+        startTime = System.currentTimeMillis();
         timer = new Timer(1000, new ActionListener() {
             int seconds = 0;
 

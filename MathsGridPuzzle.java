@@ -12,6 +12,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.NetworkInterface;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -106,6 +107,12 @@ public class MathsGridPuzzle extends JFrame {
         // start and add the timer to the next available square, which is next to the check button
         timer.start();
         add(timerLabel);
+
+        //*** Add a label with the estimated difficulty of the puzzle
+        JLabel difficultyLabel = new JLabel();
+        difficultyLabel.setText((neuralNetworkInterface.predict(getValuesFromTextFields(answerFields))));
+        add(difficultyLabel);
+        
         
         //not entirely necassary but ensures the window is the correct shape and in the centre of the screen
         setSize(emptyEquationsGrid[0].length * CELL_SIZE, emptyEquationsGrid.length * CELL_SIZE);
@@ -423,15 +430,22 @@ public class MathsGridPuzzle extends JFrame {
      *                   squares the user has to fill
      */
     private void setNNValues(List<JTextField> inputList) {
+        NNArray = getValuesFromTextFields(inputList);
+    }
+
+    private Double[] getValuesFromTextFields(List<JTextField> inputList){
+        Double[] outputList = new Double[9];
+
         for (int i = 0; i < 9; i++){
             String inputText = inputList.get(i).getText();
             if (inputText.equals("")){
-                NNArray[i] = (double) -1;
+                outputList[i] = (double) -1;
             }
             else {
-                NNArray[i] = Double.parseDouble(inputText);
+                outputList[i] = Double.parseDouble(inputText);
             }
         }
+        return outputList;
     }
 
     public static void main(String[] args) {

@@ -1,3 +1,13 @@
+/**
+ * Class representing a mathematical grid puzzle the puzzle is stored as a 2d array. There is a 
+ * grid template that is filled and then displayed to the user. The user can then fill in the 
+ * gaps inside the grid and check their answers. An arrayList is used to keep track of these 
+ * answers. The users time is tracked once they start the puzzle. Once the game is complete, 
+ * the starting state of the grid and the time taken to finish the grid are used as training
+ * data in the nueral network.  
+ * @author Fred Mortimer 201639313
+ */
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,6 +18,10 @@ import java.util.Random;
 import java.util.Collections;
 
 public class MathsGridPuzzle extends JFrame {
+
+    // Neural Network setup
+    Network neuralNetworkInterface = new Network("MathsGrid", 10);
+
     /* 
     an empty template for a puzzle grid. ? - POSSIBLE user input (may be filled in as a hint)
                                          _ - mathematical operation (+,-,*)
@@ -46,7 +60,6 @@ public class MathsGridPuzzle extends JFrame {
 
     /**
      * Constructor that handles creating the grid and the UI element 
-     * @author Fred Mortimer 201639313
      */
     public MathsGridPuzzle() {
         // set up the window
@@ -178,7 +191,6 @@ public class MathsGridPuzzle extends JFrame {
                     else {
                         answersIntArray[pointer] = -1;
                     }
-                    
                     pointer+=1;
                 }
                 // now we have inputted values in an array                
@@ -190,7 +202,8 @@ public class MathsGridPuzzle extends JFrame {
                     // end the game and timer and add the starting data and time taken to training data array
                     timer.stop();
                     double elapsedTimeDouble = (double) elapsedTime;
-                    Network.addTrainingData(NNArray, elapsedTimeDouble);
+                    setNNValues(answerFields);
+                    neuralNetworkInterface.addTrainingData(NNArray, elapsedTimeDouble);
 
                     JOptionPane.showMessageDialog(MathsGridPuzzle.this, "All equations are correct!\n" + elapsedTime + " seconds taken");
                     dispose(); // this closes the program

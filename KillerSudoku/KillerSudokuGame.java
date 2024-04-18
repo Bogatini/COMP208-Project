@@ -28,7 +28,7 @@ public class KillerSudokuGame extends JFrame {
     private final int[][] grid = new int[GRID_SIZE][GRID_SIZE];
     private final Map<List<Point>, Integer> cages = new HashMap<>();
 
-    public KillerSudokuGameNN() {
+    public KillerSudokuGame() {
         setTitle("Killer Sudoku");
         setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

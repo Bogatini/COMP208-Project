@@ -122,7 +122,7 @@ public class MathsGrid extends JFrame {
         setNNValues(answerFields);
 
         // add check bottom at the bottom of the window
-        addCheckButton();
+        addCheckButton(neuralNetworkInterface);
 
         // create and start timer
         JLabel timerLabel = new JLabel("");
@@ -216,7 +216,7 @@ public class MathsGrid extends JFrame {
      * If all answers are correct, this gets sends the data collected from the completed puzzle and
      * passes it to the neural network 
      */
-    private void addCheckButton() {
+    private void addCheckButton(Network NNInterface) {
         JButton checkButton = new JButton("Check");
         checkButton.addActionListener(new ActionListener() {
             @Override
@@ -248,11 +248,11 @@ public class MathsGrid extends JFrame {
                     double elapsedTimeDouble = (double) elapsedTime;
                     double elapsedTimeSecondsDouble = elapsedTimeDouble/1000;
                     setNNValues(answerFields);
-                    neuralNetworkInterface.addTrainingData(NNArray, elapsedTimeSecondsDouble);
+                    NNInterface.addTrainingData(NNArray, elapsedTimeSecondsDouble);
 
                     JOptionPane.showMessageDialog(MathsGrid.this, "All equations are correct!\n" + elapsedTime + " seconds taken");
                     dispose(); // this closes the program
-                    neuralNetworkInterface.save();
+                    NNInterface.save();
                 } 
                 else {
                     JOptionPane.showMessageDialog(MathsGrid.this, "Some equations are incorrect.");

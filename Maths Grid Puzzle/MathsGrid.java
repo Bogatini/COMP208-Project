@@ -72,7 +72,6 @@ public class MathsGrid extends JFrame {
         
         // set up the window
         setTitle("Maths Grid Puzzle");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(emptyEquationsGrid.length + 1, emptyEquationsGrid[0].length));
 
         // fill the grid with correct numbers

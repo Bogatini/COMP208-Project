@@ -22,9 +22,13 @@ public class menu extends JFrame {
         panel.add(sudoku);
         sudoku.setPreferredSize(buttonSize);
 
-        JButton futoShiki = new JButton("Futoshiki");
-        panel.add(futoShiki);
-        futoShiki.setPreferredSize(buttonSize);
+        JButton futoshiki = new JButton("Futoshiki");
+        panel.add(futoshiki);
+        futoshiki.setPreferredSize(buttonSize);
+
+        JButton maze = new JButton("Maze");
+        panel.add(maze);
+        maze.setPreferredSize(buttonSize);
 
 
 
@@ -46,7 +50,16 @@ public class menu extends JFrame {
             }
         });
 
-        futoShiki.addActionListener(new ActionListener() {
+        futoshiki.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                win.setVisible(false);
+                gameWin = new Futoshiki();   // CHANGE THIS LINE *****
+                openGame(win, gameWin);
+            }
+        });
+
+        maze.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 win.setVisible(false);

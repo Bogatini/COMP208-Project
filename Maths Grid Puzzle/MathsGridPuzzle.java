@@ -45,7 +45,8 @@ public class MathsGridPuzzle extends JFrame {
     // hold the grid that is given to the user
     private String[][] filledEquationsGrid;
 
-    private final int CELL_SIZE = 50;
+    private final int CELL_SIZE = 75;
+    private final int trainingTime = 10;
     private List<JTextField> answerFields; // a ListArray that can hold the actual interactive labels used to get inputs from user
                                            // confusing but its the only way to get what the user has put into the fields easily
 
@@ -56,7 +57,7 @@ public class MathsGridPuzzle extends JFrame {
     private Double[] NNArray = new Double[9];
 
     // the percentage chance for an input square to already have the answer inside it
-    private double difficulty = 0.25; 
+    private final double difficulty = 0.25; 
 
     /**
      * Constructor that handles creating the grid and the UI element 
@@ -70,6 +71,7 @@ public class MathsGridPuzzle extends JFrame {
         // fill the grid with correct numbers
         answerGrid = fillGrid(emptyEquationsGrid);
         
+        //prints the answers in the terminal
         for (String[] row : emptyEquationsGrid) {
             for (String cell : row) {
                 System.out.print(cell + " ");
@@ -82,23 +84,25 @@ public class MathsGridPuzzle extends JFrame {
         // creates a loading screen before the puzzle begins. this is used to give time to train the NN
         JDialog loadingPopUp = new JDialog();
         loadingPopUp.setTitle("Loading...");
-        loadingPopUp.setModal(true); // stop all user input
-        loadingPopUp.setSize(200, 100);
+        loadingPopUp.setSize(emptyEquationsGrid[0].length * CELL_SIZE, emptyEquationsGrid.length * CELL_SIZE);
         loadingPopUp.setLocationRelativeTo(null); // place at centre of screen
         loadingPopUp.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // dont let the user close the window, could mess up training algo
-        loadingPopUp.add(new JLabel("Loading... Please wait."));
+        loadingPopUp.add(new JLabel("Loading... Please wait.", SwingConstants.CENTER));
         loadingPopUp.setVisible(true);
 
-        neuralNetworkInterface.train((double) 10);
+        // allow for training time
+        neuralNetworkInterface.train((double) trainingTime);
 
-        // Simulate loading by pausing this thread
+        // pause current thread to give the neural network time to train
+        
         try {
-            Thread.sleep(10000); // Pausing for 2 seconds, you can adjust this time as needed
+            Thread.sleep(trainingTime*1000); // pause for ten seconds (method takes milliseconds)
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        } 
 
         // once the training is done, remove the loading screen and continue the code
+        loadingPopUp.setVisible(false);
         loadingPopUp.dispose();
 
         // take out some of the answers that have just been placed in the grid
@@ -130,16 +134,16 @@ public class MathsGridPuzzle extends JFrame {
         timer.start();
         add(timerLabel);
 
-        //*** Add a label with the estimated difficulty of the puzzle
+        // add a label with the estimated difficulty of the puzzle
         JLabel difficultyLabel = new JLabel();
         difficultyLabel.setText((neuralNetworkInterface.predict(getValuesFromTextFields(answerFields))));
         add(difficultyLabel);
         
         
-        //not entirely necassary but ensures the window is the correct shape and in the centre of the screen
+        // ensures the window is the correct shape and in the centre of the screen
         setSize(emptyEquationsGrid[0].length * CELL_SIZE, emptyEquationsGrid.length * CELL_SIZE);
         setLocationRelativeTo(null);
-        pack();
+
         // display the window
         setVisible(true);
     }
@@ -187,6 +191,10 @@ public class MathsGridPuzzle extends JFrame {
                     JLabel square = new JLabel(item, SwingConstants.CENTER);
                     square.setPreferredSize(new Dimension(CELL_SIZE, CELL_SIZE));
                     square.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                    // make the symbols bigger
+                    if (item.equals("+") || item.equals("-") || item.equals("*") || item.equals("=")){
+                        square.setFont(new Font("Dialog", Font.PLAIN, 30));
+                    }
                     add(square);
                 }
             }
@@ -236,6 +244,7 @@ public class MathsGridPuzzle extends JFrame {
 
                     JOptionPane.showMessageDialog(MathsGridPuzzle.this, "All equations are correct!\n" + elapsedTime + " seconds taken");
                     dispose(); // this closes the program
+                    neuralNetworkInterface.save();
                 } 
                 else {
                     JOptionPane.showMessageDialog(MathsGridPuzzle.this, "Some equations are incorrect.");

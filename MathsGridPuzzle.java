@@ -91,6 +91,7 @@ public class MathsGridPuzzle extends JFrame {
         loadingPopUp.setVisible(true);
 
         // allow for training time
+        System.out.println("Training Maths Grid Network");
         neuralNetworkInterface.train((double) trainingTime);
 
         // pause current thread to give the neural network time to train

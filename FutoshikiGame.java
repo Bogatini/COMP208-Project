@@ -43,7 +43,7 @@ public class FutoshikiGame{
 	private long endTIme;
 	private long timeDifference;
 	
-	private double[] gameAsArray = new double[8]; 
+	private Double[] gameAsArray = new Double[8]; 
 	
 	
 	//constructor for the game object, creates the basic grid layout
@@ -537,7 +537,7 @@ public class FutoshikiGame{
 	public void CreateNetworkArray(JFrame gameFrame){
 		
 		for (int x = 0; x < gameAsArray.length; x++) {           //make all elements in array 0.0
-            gameAsArray[x] = 0.0;
+            gameAsArray[x] = 0.0d;
 		}
 			
 		for (int i = 0; i < 7; i+=2){                             //to itterate down the colunm
@@ -547,7 +547,7 @@ public class FutoshikiGame{
 						
 							String str = gameBoxes[i][j].getText();         //get the string from the text field
 							if (str.isEmpty() == false){                         //if the string isnt empty
-								gameAsArray[i] = gameAsArray[i] + 1.0;            //increment the index of the array
+								gameAsArray[i] = gameAsArray[i] + 1.0d;            //increment the index of the array
 							}
 						} 
 						
@@ -555,7 +555,7 @@ public class FutoshikiGame{
 						
 							String str = inequalitySigns[i][j].getText();
 							if (str.isEmpty() == false){
-								gameAsArray[i+1] = gameAsArray[i+1] + 1.0;
+								gameAsArray[i+1] = gameAsArray[i+1] + 1.0d;
 							}
 						}
 					}

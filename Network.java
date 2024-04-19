@@ -13,7 +13,7 @@ public class Network {
     // Instantiate the list of layers, that is used as the network.
     List<Layer> layers = new ArrayList<Layer>();
     private Layer outputLayer;
-    private String FOLDER = new String("NeuralNet/");
+    private String FOLDER = new String("");
     public File networkFile;
     public File trainingFile;
 

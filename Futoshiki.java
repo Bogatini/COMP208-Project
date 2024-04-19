@@ -61,7 +61,7 @@ public class Futoshiki{
 		gameFrame.setResizable(false);    //so that the size of the frame can't be changed
 		gameFrame.setVisible(false);      //sets the frame to visible
 		gameFrame.setLayout(new BorderLayout());     //sets the frames border layout for easier arrangement of aspects later
-		gameFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);         //sets the program to close when the 'x' is pressed 
+		gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);         //sets the program to close when the 'x' is pressed 
 		gameFrame.setLocationRelativeTo(null);                 //will display the frame in the middle of the screen
         
 		JPanel spacePanelEast = new JPanel();             //creates a blank panel used for making space	on the left hand side	
@@ -573,7 +573,7 @@ public class Futoshiki{
 			
     
 	public static void main (String[] args){
-		                                                                   //main method that stars game
+		//main method that stars game
 		Futoshiki futoshikiPuzzle = new Futoshiki();
 		
 		

@@ -5,6 +5,8 @@
  * answers. The users time is tracked once they start the puzzle. Once the game is complete, 
  * the starting state of the grid and the time taken to finish the grid are used as training
  * data in the nueral network.  
+ * 
+ * 
  * @author Fred Mortimer 201639313
  */
 
@@ -99,15 +101,6 @@ public class MathsGrid extends JFrame {
         System.out.println("MathsGrid.java: Calling Train()");
         neuralNetworkInterface.train((double) trainingTime);
         System.out.println("MathsGrid.java: Training Complete.");
-
-        // pause current thread to give the neural network time to train
-        // [no need for this, training already takes the time it needs - huw]
-        
-        /* try {
-            Thread.sleep(trainingTime*1000); // pause for ten seconds (method takes milliseconds)
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }  */
 
         // once the training is done, remove the loading screen and continue the code
         loadingPopUp.setVisible(false);

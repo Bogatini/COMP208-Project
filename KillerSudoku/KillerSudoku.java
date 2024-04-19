@@ -469,19 +469,19 @@ public class KillerSudoku extends JFrame {
         return true;
     }
 
-    // private void printSolution() {
-    // System.out.println("Killer Sudoku Solution:");
-    // for (int i = 0; i < GRID_SIZE; i++) {
-    // for (int j = 0; j < GRID_SIZE; j++) {
-    // System.out.print(grid[i][j] + " ");
-    // }
-    // System.out.println();
-    // }
-    // }
+    private void printSolution() {
+    System.out.println("Killer Sudoku Solution:");
+    for (int i = 0; i < GRID_SIZE; i++) {
+    for (int j = 0; j < GRID_SIZE; j++) {
+    System.out.print(grid[i][j] + " ");
+    }
+    System.out.println();
+    }
+    }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(KillerSudoku::new);
-        // KillerSudokuGame game = new KillerSudokuGame();
-        // SwingUtilities.invokeLater(game::printSolution);
+        //SwingUtilities.invokeLater(KillerSudoku::new);
+        KillerSudoku game = new KillerSudoku();
+        SwingUtilities.invokeLater(game::printSolution);
     }
 }

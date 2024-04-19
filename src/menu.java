@@ -3,12 +3,14 @@ import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.BoxLayout;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class menu extends JFrame {
 
     public menu() {
         Dimension buttonSize = new Dimension(200, 50);
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER,10,5));;
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER,10,5));
 
         // Buttons
         JButton sudoko = new JButton("Sudoku");
@@ -26,6 +28,16 @@ public class menu extends JFrame {
         JButton mathsgrid = new JButton("Maths Grid");
         panel.add(mathsgrid);
         mathsgrid.setPreferredSize(buttonSize);
+
+        mathsgrid.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                MathsGrid newWin = new MathsGrid();
+            }
+        });
+
+        this.setFocusableWindowState(false);
+        this.toBack();
 
         JButton maze = new JButton("Maze");
         panel.add(maze);

@@ -43,9 +43,9 @@ public class KillerSudoku extends JFrame {
         loadingPopUp.add(new JLabel("Loading... Please wait.", SwingConstants.CENTER));
         loadingPopUp.setVisible(true);
 
-        System.out.println("MathsGrid.java: Calling Train()");
+        System.out.println("KillerSudokuGame.java: Calling Train()");
         Network.train((double) trainingTime);
-        System.out.println("MathsGrid.java: Training Complete.");
+        System.out.println("KillerSudokuGame.java: Training Complete.");
         
         JPanel centerPanel = new JPanel(new GridLayout(GRID_SIZE + 1, GRID_SIZE + 1));
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));

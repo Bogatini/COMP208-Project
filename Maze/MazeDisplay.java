@@ -13,12 +13,11 @@ public class MazeDisplay extends JFrame {
     public MazeDisplay(String[][] maze) {
         this.MAZE = maze;
         setTitle("Maze Display");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(maze.length * CELL_SIZE, (maze[0].length+1) * CELL_SIZE);
+        setSize(750,800);
         setLocationRelativeTo(null);
         add(new MazePanel());
-        setSize(MAZE[0].length * CELL_SIZE, MAZE.length * CELL_SIZE);
         setVisible(true);
+        
     }
 
     /**

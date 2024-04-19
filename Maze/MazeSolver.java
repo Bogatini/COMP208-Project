@@ -6,7 +6,7 @@
  * 
  * @author Fred Mortimer 201639313
  */
-
+import javax.swing.*;
 import java.util.Random;
 import java.io.BufferedReader; // used to get qvalues from file
 import java.io.BufferedWriter; // used to write  qvalues to file
@@ -14,8 +14,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService; // used
+import java.util.concurrent.Executors;
 
-public class MazeSolver {
+public class MazeSolver extends JFrame {
     private static final int NUM_EPISODES = 10000; // i chose a random big number - the bigger this number the better the path will be
                                                    // 100 is too small, might not complete - 10000 seems to be good for a 10x10 maze
                                                    // or maybe keep it small - demonstrates how the saved q vaules can be used to extend actor's learning
@@ -58,52 +60,30 @@ public class MazeSolver {
      * Constructor that handles creating user's input window and output display
      * as well as running the training algorithm on a given maze
     */
-    public MazeSolver() {
-
-        MazeCreator mazeCreator = new MazeCreator(MAX_ROW+1, MAX_COL+1); // add one as MazeCreator uses the exact number of squares on each axis, while MazeSolver uses index numbers
-
-        // pause this thread while waiting for the user to create their maze
-        while (!mazeCreator.getContinueFlag()) {
-            try {
-                Thread.sleep(1);
-            } 
-            catch (InterruptedException e) {
-                // Do nothing
-            }
-        }
-
-        // this is just as bad but it works the same.
-        //while (!mazeCreator.getContinueFlag()) {
-        //    System.out.print(""); // i have no idea why, but just ";" doesnt work
-        //}
-        
-        // user creates their own maze
-        MAZE = mazeCreator.getMaze();
-        
-        // get maze from file
-        //readMazeFile(mazeFilePath);
-
-        mazeDisplay = new MazeDisplay(MAZE);
-
+    public MazeSolver(String[][] mazeData) {
+        // Initialize maze display with provided maze data
+        mazeDisplay = new MazeDisplay(mazeData);
+            
+        MAZE = mazeData;
+    
         // list of every possible state, with a list of qValues for each possible action when in said state
         qValues = new double[MAZE.length * MAZE[0].length][NUM_ACTIONS];
-
+    
         // either gets qvalues or randomly generates them if no file is present
         readQValues(qValuesFilePath);
-
+    
         // trains to find qValues
         train();
-
+    
         // once train() has run, all q values are determined for the maze. WriteQValues() saves them to a file
         writeQValues(qValuesFilePath);
-
+    
         writeMazeToFile(mazeFilePath);
-
-        // run the code
+    
+        // show the maze being solved
         try {
-            this.solveMaze();
-        }
-        catch (Exception e)  {
+            this.solveMazeInBackground();
+        } catch (Exception e) {
             System.err.println(e.getMessage());
             System.exit(0);
         }
@@ -367,16 +347,40 @@ public class MazeSolver {
             currentState = newRow * MAZE[0].length + newCol;
 
             mazeDisplay.updateMaze(MAZE);
-            
+
+            // wait a little bit between each step to better convay movement
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException e) { 
-                // Restore the interrupted status
-                Thread.currentThread().interrupt();}
+            } 
+            catch (InterruptedException e) { 
+                Thread.currentThread().interrupt();
+            }
         }
         // do the last step manually
         MAZE[currentState / MAZE[0].length][currentState % MAZE[0].length] = "P";
         mazeDisplay.updateMaze(MAZE);        
+        
+        JOptionPane.showMessageDialog(MazeSolver.this, "Maze complete!");
+
+        this.setVisible(false);
+        mazeDisplay.setVisible(false);
+        this.dispose();
+
+    }
+
+    private void solveMazeInBackground() {
+        // executor runs code on a different thread, which is necassary becasue the main menu and other Maze components take all the resources in their thread
+        // this allows the incramental steps of the maze being solved to be shown
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            try {
+                solveMaze();
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+                System.exit(0);
+            }
+        });
+        executor.shutdown();
     }
 
     public String[][] getMaze(){
@@ -384,6 +388,7 @@ public class MazeSolver {
     }
 
     public static void main(String[] args) {
-        MazeSolver mazeSolver = new MazeSolver();
+        MazeCreator mazeCreator = new MazeCreator(15, 15);
+        MazeSolver mazeSolver = new MazeSolver(mazeCreator.getMaze());
     }
 }

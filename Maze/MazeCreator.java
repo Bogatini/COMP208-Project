@@ -26,7 +26,6 @@ public class MazeCreator extends JFrame {
         gridButtons = new JButton[rows][columns];
 
         setTitle("Maze Creator");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new GridLayout(rows + 1, columns)); // +1 for the print button row - annoyingly this means the print button is a square (cant find a way to make it not stick to the grid payout set in this line)
         initializeGrid();
         addPrintButton();
@@ -115,6 +114,9 @@ public class MazeCreator extends JFrame {
     }
     public boolean getContinueFlag() {
         return continueFlag;
+    }
+    public void setContinueFlag(boolean inputFlag){
+        this.continueFlag = inputFlag;
     }
 
     private void printMaze() {

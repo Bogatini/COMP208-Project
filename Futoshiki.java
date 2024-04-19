@@ -56,7 +56,7 @@ public class Futoshiki extends JFrame{
 		setResizable(false);    //so that the size of the frame can't be changed
 		setVisible(false);      //sets the frame to visible
 		setLayout(new BorderLayout());     //sets the frames border layout for easier arrangement of aspects later
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);         //sets the program to close when the 'x' is pressed 
+		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  //dont do this, it closes ALL frames when the window is closes, including the main menu       //sets the program to close when the 'x' is pressed 
 		setLocationRelativeTo(null);                 //will display the frame in the middle of the screen
         
 		JPanel spacePanelEast = new JPanel();             //creates a blank panel used for making space	on the left hand side	

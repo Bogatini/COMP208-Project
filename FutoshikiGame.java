@@ -1,3 +1,13 @@
+/**
+ *	FutoshikiGame is a class that uses two interlinked 2D arrays, one being a JTextField and the other being a 
+ *	JLabel, to create a 7x7 grid of numbers and inequality signs, which is just a 4x4 grid of numbers with some
+ *	inequality signs between them all. This grid is then filled completely to create a final grid, and then most 
+ *	of the numbers and signs are removed, and the grid is displayed to the user. Once the game is complete, the 
+ *	starting state of the grid and the time taken to finish it are used as training data in the nueral network. 
+ *  
+ *  @author Connor Fitzpatrick
+ */
+
 // import statements  
 import java.awt.*;    
 import java.awt.event.*;
@@ -5,8 +15,15 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.util.Random;
 import java.util.ArrayList;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class FutoshikiGame{
+	
+	
+	Network futoshikiNetwork = new Network("Futoshiki", 8);         //creates the network object for futoshiki
+	
+	
 	
 	private JFrame gameFrame;                    //creates an attribute for the game frame
 	
@@ -16,9 +33,21 @@ public class FutoshikiGame{
 	
 	private JButton submitGame;                  //creates a button attribute
 	
-	private JLabel errorLabel;                   //will be used to dislpay instructions to the user
+	private JLabel timeLabel;                   //will be used to dislpay instructions to the user
 	
-	public FutoshikiGame(){                  //constructor for the game object, creates the basic grid layout
+	
+	
+	private Timer timer;                         //timer attributes that will be used for training and neural network
+	
+	private long startTime;
+	private long endTIme;
+	private long timeDifference;
+	
+	private double[] gameAsArray = new double[8]; 
+	
+	
+	//constructor for the game object, creates the basic grid layout
+	public FutoshikiGame(){                 
 		
 		
 		gameFrame = new JFrame("Futoshiki Game");          //instantiates the Jframe attribute
@@ -33,18 +62,19 @@ public class FutoshikiGame{
 		JPanel spacePanelEast = new JPanel();             //creates a blank panel used for making space	on the left hand side	
 		JPanel spacePanelWest = new JPanel();             //creates a blank panel used for making space	on the right hand side			
 		
-		JPanel errorPanel = new JPanel();                   //creates a panel for a error at the top 			
+		JPanel timePanel = new JPanel(new GridLayout(2, 1));                   //creates a panel for a timer at the top 			
 		JPanel gamePanel = new JPanel (new GridLayout (7, 7, 10, 10));                //creates a panel with a 7x7 grid layout for our game structure, with a 10 pixel gap between each grid
 		JPanel submitPanel = new JPanel();                                      //creates a panel for a button 
 		
-		spacePanelEast.setBackground(Color.WHITE); spacePanelWest.setBackground(Color.WHITE); errorPanel.setBackground(Color.WHITE); gamePanel.setBackground(Color.WHITE); submitPanel.setBackground(Color.WHITE);   //sets the background for all panels as white
+		spacePanelEast.setBackground(Color.WHITE); spacePanelWest.setBackground(Color.WHITE); timePanel.setBackground(Color.WHITE); gamePanel.setBackground(Color.WHITE); submitPanel.setBackground(Color.WHITE);   //sets the background for all panels as white
 		
 		gameFrame.add(spacePanelEast, BorderLayout.EAST);     //adds the two blank panels to the frame on their respected sides
 		gameFrame.add(spacePanelWest, BorderLayout.WEST);
 		
-		errorLabel = new JLabel("");
-		errorPanel.add(errorLabel);
-		gameFrame.add(errorPanel, BorderLayout.NORTH);          //adds the error panel to the top of the frame.
+		timeLabel = new JLabel("");
+		timeLabel.setHorizontalAlignment(JLabel.CENTER); timeLabel.setVerticalAlignment(JLabel.CENTER);
+		timePanel.add(timeLabel);
+		gameFrame.add(timePanel, BorderLayout.NORTH);          //adds the time panel to the top of the frame.
 		
 		gameBoxes = new JTextField[7][7];          		//instantiates the gameboxes attribute as the 7x7 text field array
 		inequalitySigns = new JLabel[7][7];             //instantiates the inequalitySigns attribute with a 7x7 label array
@@ -81,10 +111,50 @@ public class FutoshikiGame{
 		
 		gameFrame.add(gamePanel, BorderLayout.CENTER);     //adds the game panel to the frame in the middle
 		
-		GridFiller(gameFrame);                             //calls the grid filler method
+		JFrame loadingScreen = new JFrame();
+        loadingScreen.setTitle("Loading...");
+        loadingScreen.setSize(200, 100);
+        loadingScreen.setLocationRelativeTo(null); // place at centre of screen
+        loadingScreen.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // dont let the user close the window, could mess up training algo
+        loadingScreen.add(new JLabel("Loading... Please wait."));
+        loadingScreen.setVisible(true);
 		
-		GameMaker(gameFrame);                              //calls the game maker method
 		
+		futoshikiNetwork.train(10.0);
+		
+		try {
+            Thread.sleep(2000); // Pausing for 2 seconds to give impression of loading
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+		
+		loadingScreen.setVisible(false);
+		
+		
+		GridFiller(gameFrame);                             //calls the grid filler method which fills the grid completely
+		
+		GameMaker(gameFrame);                              //calls the game maker method which empties most of the gird, leaving a puzzle
+		
+		
+		CreateNetworkArray(gameFrame);
+		
+		startTime = System.currentTimeMillis();
+		
+		timer = new Timer(1000, new ActionListener() {                              //starts a timer that will be displayed on the screen
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                timeDifference = (System.currentTimeMillis() - startTime) / 1000;
+                timeLabel.setText(timeDifference + " seconds");
+            }
+        }); 
+		timer.start();                 
+		
+		JLabel diffLabel = new JLabel();                     //a label to show the difficulty
+		diffLabel.setText(futoshikiNetwork.predict(gameAsArray));           //passes the array to the predict method of the network object
+		diffLabel.setHorizontalAlignment(JLabel.CENTER); diffLabel.setVerticalAlignment(JLabel.CENTER);   //arranges the text of the label        
+		timePanel.add(diffLabel);                                           //adds the label to the panel at the top
+		
+			
 		submitGame = new JButton("SUBMIT");         //instantiates the button attribute with some text
 		
 		submitGame.addActionListener(e -> buttonPressed(gameFrame));         //lamda expression for action listener of button, calls method
@@ -114,7 +184,6 @@ public class FutoshikiGame{
 				
 					int num = 10;                              //num is the number which will be added to the text fields
 					int index = 0;                                    //index will be the index of the array list that we are trying to get
-				
 					boolean duplicate = true;                          //one of two boolean values to show if the current number is a duplicate, this one is for controlling the loop
 					while (duplicate == true){  				//only stops looping when number definitely isn't a duplicate
 				
@@ -131,25 +200,38 @@ public class FutoshikiGame{
 					
 						boolean dup = false;                        //second boolean for duplicate identification, changed inside the loop, so that the while loop can be exitted at the end
 					
-						for (int a = i-1; a >= 0; a--){                  //a loop that will loop back across the row, from the current one to the left most one 
+						for (int a = i-1; a >= 0; a--){  						             //a loop that will loop back across the row, from the current one to the left most one 
+			 	
 							if (a % 2 == 0){
 								
-								int prevNum = Integer.parseInt(gameBoxes[a][j].getText());
+								int prevNuma = Integer.parseInt(gameBoxes[a][j].getText());
 								
-								if (num == prevNum){                   //and if the current number waiting to be added is already there, set the 
+							    if (num == prevNuma) {                   //and if the current number waiting to be added is already there, set the 
 									dup = true;                              //boolean dup as true, if not, keep it as false
 								}
-							}
+									
+								                            //boolean dup as true, if not, keep it as false
+						    }
+							
 						}
 						
+						
 						if (dup == false){                              //repeats the while loop if a duplicate is found
-							duplicate = false;
+							duplicate = false;                                   
+							gameBoxes[i][j].setText(String.valueOf(num));      //if no duplicate, adds the number to the current text field
+							numbers.remove(index);                             //removes that number from array list so it cannot be used again in that row
 						}
-					
+						
+						if ((size == 1) && (dup == true)){              //if a duplicate us found but we are at the end of the arraylist           //
+							duplicate = false;                          //exit the while loop and restart the whole process
+							j=0;
+							i=0;
+							numbers.clear();
+							numbers.add(1); numbers.add(2); numbers.add(3); numbers.add(4);         //adding the numbers to the array list
+						}
+							
 					}
 				
-					gameBoxes[i][j].setText(String.valueOf(num));          //if no duplicate, adds the number to the current text field
-					numbers.remove(index);                             //removes that number from array list so it cannot be used again in that row
 				}
 			}
 		}
@@ -237,7 +319,7 @@ public class FutoshikiGame{
 			 
 				int pos = 1;                               //set int value as odd for loop below
 				
-				while (pos % 2 != 0){                    //on these rows with just labels, the off j coordinates are empty, so loop makes sure random number is even
+				while (pos % 2 != 0){                    //on these rows with just labels, the odd j coordinates are empty, so loop makes sure random number is even
 					pos = rand.nextInt(6);
 				}
 				
@@ -419,23 +501,7 @@ public class FutoshikiGame{
 			
 			boolean validInequalityState = InequalityChecker(gameFrame);        //same as above but for InequalityChecker
 			
-			if (validInputState == false){                      //if InputVerifier comes back false, tell the user its wrong and let them retry
-				JOptionPane.showMessageDialog(gameFrame,
-                    "The only allowed inputs are 1, 2, 3 or 4, \neach number can only occurs once on every row and colunm, \nand all inequality signs must be satisfied.",
-                    "WRONG!",
-                    JOptionPane.ERROR_MESSAGE);
-				gameFrame.setVisible(true);
-			}
-			
-			else if (validNumberAmountState == false){         //same as above but for NumberAmountChecker
-				JOptionPane.showMessageDialog(gameFrame,
-                    "The only allowed inputs are 1, 2, 3 or 4, \neach number can only occurs once on every row and colunm, \nand all inequality signs must be satisfied.",
-                    "WRONG!",
-                    JOptionPane.ERROR_MESSAGE);
-				gameFrame.setVisible(true);
-			}
-			
-			else if (validInequalityState == false){          //same as above but for InequalityChecker
+			if (validInputState == false || validNumberAmountState == false || validInequalityState == false){   //if any of the boolean variables come back false, tell user they are wrong
 				JOptionPane.showMessageDialog(gameFrame,
                     "The only allowed inputs are 1, 2, 3 or 4, \neach number can only occurs once on every row and colunm, \nand all inequality signs must be satisfied.",
                     "WRONG!",
@@ -444,36 +510,65 @@ public class FutoshikiGame{
 			}
 			
 			else if (validInputState && validNumberAmountState && validInequalityState) {
-			                                                                //if all of the methods return true, then change gameState to true to satisfy if statement below
-				errorLabel.setText("");                                     //and finish the game
-				gameState = true;
+			                            //if all of the methods return true, then change gameState to true to 																		//satisfy if statement below and finish the                                 
+				gameState = true;       //end the game
 			}
 				
 	
-		if (gameState == true){                            
-			gameFrame.getContentPane().removeAll();                    //once here, all checks are done and the puzzle is complete
-		
-			JLabel victoryTitle = new JLabel("Congratulations!");                //one of two final output messages for the user
-		
-			victoryTitle.setHorizontalAlignment(JLabel.CENTER);                 //put the message in the middle
-		
-			gameFrame.add(victoryTitle, BorderLayout.NORTH);                                  //adds the first output message to the user
-		
-			JLabel victoryText = new JLabel("You have completed the puzzle.");         //2nd final output message
-		
-			victoryText.setHorizontalAlignment(JLabel.CENTER);
-		
-			gameFrame.add(victoryText, BorderLayout.CENTER);
+		if (gameState == true){                            		
 				
-			gameFrame.setVisible(true);                                   //for the final output message				
+			timer.stop();
+			double timeDifferenceDouble = (double) timeDifference;
+			timeDifferenceDouble = timeDifferenceDouble / 1000;
+			futoshikiNetwork.addTrainingData(gameAsArray, timeDifferenceDouble);
 			
+			futoshikiNetwork.save();
+			
+			JOptionPane.showMessageDialog(gameFrame,
+                "Well Done!\nYou completed the Futoshiki puzzle in " + String.valueOf(timeDifference) + " seconds.",                //output window of congratulations to the user
+                "CONGRATULATIONS!",
+                JOptionPane.INFORMATION_MESSAGE);
+			
+			System.exit(0);
 		}			
-	}			
+	}
+
+
+	public void CreateNetworkArray(JFrame gameFrame){
+		
+		for (int x = 0; x < gameAsArray.length; x++) {           //make all elements in array 0.0
+            gameAsArray[x] = 0.0;
+		}
+			
+		for (int i = 0; i < 7; i+=2){                             //to itterate down the colunm
+				
+					for (int j = 0; j < 7; j++){            //for each itteration of the colunm, go along the row
+						if (j % 2 == 0){                       //if j is even its a number text field
+						
+							String str = gameBoxes[i][j].getText();         //get the string from the text field
+							if (str.isEmpty() == false){                         //if the string isnt empty
+								gameAsArray[i] = gameAsArray[i] + 1.0;            //increment the index of the array
+							}
+						} 
+						
+						else{                        //same as above but for j is odd so its a inequa;ity sign label
+						
+							String str = inequalitySigns[i][j].getText();
+							if (str.isEmpty() == false){
+								gameAsArray[i+1] = gameAsArray[i+1] + 1.0;
+							}
+						}
+					}
+				
+			
+		}
+	}
+							
 			
     
 	public static void main (String[] args){
 		                                                                   //main method that stars game
-		new FutoshikiGame();
+		FutoshikiGame futoshikiPuzzle = new FutoshikiGame();
 		
 		
 	}

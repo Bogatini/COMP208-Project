@@ -35,6 +35,11 @@ public class KillerSudoku extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+        System.out.println("KillerSudoku.java: Instantiating Network.");
+        Network neuralNetwork = new Network("KillerSudoku", 81);
+        System.out.println("KillerSudoku.java: Calling Save().");
+        neuralNetwork.save();
+
         JDialog loadingPopUp = new JDialog();
         loadingPopUp.setTitle("Loading...");
         loadingPopUp.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -44,8 +49,11 @@ public class KillerSudoku extends JFrame {
         loadingPopUp.setVisible(true);
 
         System.out.println("KillerSudokuGame.java: Calling Train()");
-        Network.train((double) trainingTime);
+        neuralNetwork.train(10d);
         System.out.println("KillerSudokuGame.java: Training Complete.");
+
+        loadingPopUp.setVisible(false);
+        loadingPopUp.dispose();
         
         JPanel centerPanel = new JPanel(new GridLayout(GRID_SIZE + 1, GRID_SIZE + 1));
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -81,11 +89,6 @@ public class KillerSudoku extends JFrame {
         startTimer();
         setLocationRelativeTo(null);
         setVisible(true);
-
-        System.out.println("KillerSudoku.java: Instantiating Network.");
-        Network neuralNetwork = new Network("KillerSudoku", 81);
-        System.out.println("KillerSudoku.java: Calling Save().");
-        neuralNetwork.save();
         
         Double[] puzzleInputs = convertPuzzleToInputs(grid);
         String difficulty = neuralNetwork.predict(puzzleInputs);

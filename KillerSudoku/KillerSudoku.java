@@ -83,7 +83,7 @@ public class KillerSudoku extends JFrame {
         displayCageSums();
         applyBorders();
         add(centerPanel, BorderLayout.CENTER);
-        addCheckButton(bottomPanel);
+        addCheckButton(bottomPanel, neuralNetwork);
         add(bottomPanel, BorderLayout.SOUTH);
         addTimerLabel(bottomPanel);
         startTimer();
@@ -107,7 +107,7 @@ public class KillerSudoku extends JFrame {
         return inputs;
     } 
 
-    private void puzzleCompleted(double timeTaken) {
+    private void puzzleCompleted(double timeTaken, Network neuralNetwork) {
         // Assuming grid is the completed puzzle and timeTaken is the time taken by the player in seconds
         Double[] puzzleInputs = convertPuzzleToInputs(grid);
         neuralNetwork.addTrainingData(puzzleInputs, timeTaken); // Cast timeTaken to double
@@ -358,7 +358,7 @@ public class KillerSudoku extends JFrame {
         }
     }
 
-    private void addCheckButton(JPanel bottomPanel) {
+    private void addCheckButton(JPanel bottomPanel,  Network neuralNetwork) {
         JButton checkButton = new JButton("Check");
         checkButton.addActionListener(new ActionListener() {
             @Override
@@ -366,7 +366,7 @@ public class KillerSudoku extends JFrame {
                 if (checkSolution()) {
                     timer.stop();
                     double timeTaken = ((System.currentTimeMillis() - startTime) / 1000);
-                    puzzleCompleted(timeTaken);
+                    puzzleCompleted(timeTaken, neuralNetwork);
                     JOptionPane.showMessageDialog(KillerSudoku.this, "Congratulations! Your solution is correct.");
                 } else {
                     JOptionPane.showMessageDialog(KillerSudoku.this,

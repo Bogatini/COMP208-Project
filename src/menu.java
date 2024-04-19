@@ -1,34 +1,19 @@
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.BoxLayout;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class menu extends JFrame {
 
-    Object newWin;
+    JFrame gameWin;
+
+    JFrame win = this;
 
     public menu() {
         Dimension buttonSize = new Dimension(200, 50);
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER,10,5));
 
         // Buttons
-        JButton sudoko = new JButton("Sudoku");
-        panel.add(sudoko);
-        sudoko.setPreferredSize(buttonSize);
-
-        JButton futoShiki = new JButton("Futoshiki");
-        panel.add(futoShiki);
-        futoShiki.setPreferredSize(buttonSize);
-
-        JButton kenken = new JButton("KenKen");
-        panel.add(kenken);
-        kenken.setPreferredSize(buttonSize);
-
-
-
         JButton mathsgrid = new JButton("Maths Grid");
         panel.add(mathsgrid);
         mathsgrid.setPreferredSize(buttonSize);
@@ -36,48 +21,43 @@ public class menu extends JFrame {
         mathsgrid.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                MathsGrid newWin = new MathsGrid();
-                setVisible(false);
+                win.setVisible(false);
+                gameWin = new MathsGrid();   // CHANGE THIS LINE *****
+                openGame(win, gameWin);
             }
         });
 
-
-        
-        JButton maze = new JButton("Maze");
-        panel.add(maze);
-        maze.setPreferredSize(buttonSize);
-
+        // you need to add all the buttons for the other games
+        //change the button name and the object that is made in them
 
 
         panel.setBackground(Color.BLACK);
         add(panel, BorderLayout.CENTER);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Menu");
-
-
-        this.setFocusableWindowState(false);
-        this.toBack();
 
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    private void checkGameState(Object a){
-        // a game is running
-        if (a != null) {
-            // hide the menu window
-            setVisible(false);
-        }
-        else {
-            setVisible(true);
-        }
+    /**
+     * 
+     * @param currentWindow
+     * @author Liv Mac with help from Fred M
+     */
+    private void openGame(JFrame currentWindow, JFrame gameWindow) {
+        gameWin.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                currentWindow.setVisible(true); // show the menu when the new window is closed
+                currentWindow.setFocusableWindowState(true);
+                currentWindow.toFront();
+            }
+        });
     }
 
     public static void main(String[] args) {
         menu mainMenu = new menu();
-        while (mainMenu != null) {
-            mainMenu.checkGameState(mainMenu.newWin);
-        }
     }
 }

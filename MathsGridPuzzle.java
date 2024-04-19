@@ -493,6 +493,7 @@ public class MathsGridPuzzle extends JFrame {
     }
 
     public static void main(String[] args) {
+        System.out.println("Starting Game.");
         MathsGridPuzzle puzzleWindow = new MathsGridPuzzle();
     }
 }

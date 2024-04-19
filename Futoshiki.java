@@ -162,7 +162,7 @@ public class Futoshiki{
 			
 		submitGame = new JButton("SUBMIT");         //instantiates the button attribute with some text
 		
-		submitGame.addActionListener(e -> buttonPressed(gameFrame));         //lamda expression for action listener of button, calls method
+		submitGame.addActionListener(e -> buttonPressed(gameFrame, futoshikiNetwork));         //lamda expression for action listener of button, calls method
 		
 		submitPanel.add(submitGame);                //adds the button to the panel for the button 
 		
@@ -233,6 +233,7 @@ public class Futoshiki{
 							i=0;
 							numbers.clear();
 							numbers.add(1); numbers.add(2); numbers.add(3); numbers.add(4);         //adding the numbers to the array list
+						System.out.println("far");	
 						}
 							
 					}
@@ -494,7 +495,7 @@ public class Futoshiki{
 		
 	}
 	
-	public void buttonPressed (JFrame gameFrame){
+	public void buttonPressed (JFrame gameFrame, Network NNInterface){
 	
 		gameFrame.setVisible(false);
 				
@@ -525,9 +526,9 @@ public class Futoshiki{
 			timer.stop();
 			double timeDifferenceDouble = (double) timeDifference;
 			timeDifferenceDouble = timeDifferenceDouble / 1000;
-			futoshikiNetwork.addTrainingData(gameAsArray, timeDifferenceDouble);
+			NNInterface.addTrainingData(gameAsArray, timeDifferenceDouble);
 			
-			futoshikiNetwork.save();
+			NNInterface.save();
 			
 			JOptionPane.showMessageDialog(gameFrame,
                 "Well Done!\nYou completed the Futoshiki puzzle in " + String.valueOf(timeDifference) + " seconds.",                //output window of congratulations to the user

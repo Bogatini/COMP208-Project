@@ -7,7 +7,7 @@ public class menu extends JFrame {
 
     JFrame gameWin = new JFrame();
 
-    JFrame win = this;
+    JFrame menuWindow = this;
 
     public menu() {
         Dimension buttonSize = new Dimension(200, 50);
@@ -35,48 +35,65 @@ public class menu extends JFrame {
         mathsgrid.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                win.setVisible(false);
+                menuWindow.setVisible(false);
                 gameWin = new MathsGrid();   // CHANGE THIS LINE *****
-                openGame(win, gameWin);
+                openGame(menuWindow, gameWin);
             }
         });
 
         sudoku.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                win.setVisible(false);
+                menuWindow.setVisible(false);
                 gameWin = new KillerSudoku();   // CHANGE THIS LINE *****
-                openGame(win, gameWin);
+                openGame(menuWindow, gameWin);
             }
         });
 
         futoshiki.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                win.setVisible(false);
+                menuWindow.setVisible(false);
                 gameWin = new Futoshiki();   // CHANGE THIS LINE *****
-                openGame(win, gameWin);
+                openGame(menuWindow, gameWin);
             }
         });
 
+        // spaghetti code from fred
+        // beacuse two windows are created, two windowListeners must be created, one inside the other
         maze.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                win.setVisible(false);
-                gameWin = new MazeSolver();   // CHANGE THIS LINE *****
-                openGame(win, gameWin);
+                menuWindow.setVisible(false);
+                MazeCreator mazeCreator = new MazeCreator(15, 15);
+                mazeCreator.setVisible(true); // first step, create the maze
+
+                mazeCreator.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+                        if (mazeCreator.getContinueFlag()) {
+                            String[][] mazeData = mazeCreator.getMaze();
+                            gameWin = new MazeSolver(mazeData); // second step, solve the maze
+                                                                // pass maze data to MazeSolver
+                            gameWin.addWindowListener(new java.awt.event.WindowAdapter() {
+                                @Override
+                                public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+                                    menuWindow.setVisible(true);
+                                }
+                            });
+
+                            openGame(menuWindow, gameWin);
+                        } 
+                        else {
+                            menuWindow.setVisible(true); // if the user didn't finish creating the maze (e.g. closed the window didnt press done), show the menu again
+                        }
+                    }
+                });
             }
         });
 
-
-
-        // you need to add all the buttons for the other games
-        //change the button name and the object that is made in them
-
-
         panel.setBackground(Color.BLACK);
         add(panel, BorderLayout.CENTER);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Menu");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -86,6 +103,7 @@ public class menu extends JFrame {
     }
 
     /**
+     * this maybe isnt the best name for this method, what it does is adds a listener that is triggered when the gameWindow is closed that reneables currentWindow
      * 
      * @param currentWindow
      * @author Liv Mac with help from Fred M

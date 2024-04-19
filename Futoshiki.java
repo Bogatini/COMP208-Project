@@ -113,7 +113,7 @@ public class Futoshiki extends JFrame{
 		
 		JFrame loadingScreen = new JFrame();
         loadingScreen.setTitle("Loading...");
-        loadingScreen.setSize(200, 100);
+        loadingScreen.setSize(500, 500);
         loadingScreen.setLocationRelativeTo(null); // place at centre of screen
         loadingScreen.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // dont let the user close the window, could mess up training algo
         loadingScreen.add(new JLabel("Loading... Please wait."));

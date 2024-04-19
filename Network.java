@@ -155,14 +155,16 @@ public class Network {
             answers.add(new SimpleMatrix(new double[]{outputs.get(i)}));
         }
 
-        System.out.println("Loaded " + data.size() + "training examples, with " + answers.size() + "answers.");
+        System.out.println("Loaded " + data.size() + " training examples, with " + answers.size() + " answers.");
 
         Double startTime = (double) (System.nanoTime() / 1000000000l);
         Double currentTime = startTime;
+        System.out.println("Network.java: Starting Train for " + duration + " seconds.");
         while (currentTime < startTime + duration) {
             train(data, answers, 100, 0.1d);
             currentTime = (double) (System.nanoTime() / 1000000000l);
         }
+        System.out.println("Network.java: Train complete.");
     }
     
     /**
@@ -211,7 +213,7 @@ public class Network {
 
                     // compare this to network before this mutation decide to whether to save or revert the change.
                     if(thisEpochLoss < bestEpochLoss) {
-                        System.out.println("Improved the Network by mutating neuron " + layer + "." + neuron +  ". Loss reduced from " + bestEpochLoss + " to " + thisEpochLoss);
+                        //System.out.println("Improved the Network by mutating neuron " + layer + "." + neuron +  ". Loss reduced from " + bestEpochLoss + " to " + thisEpochLoss);
                         bestEpochLoss = thisEpochLoss;
                         epochLayer.remember(neuron);
                     } else {
@@ -252,22 +254,29 @@ public class Network {
      * @return String representing the difficulty: "Trivial", "Easy", "Intermediate", "Challenging", or "Hard"
      */
     public String predict(Double[] input) {
-        SimpleMatrix inputMatrix = new SimpleMatrix(input.length, 1);
-        for (int i = 0; i < input.length; i++) {
-            inputMatrix.set(i, input[i]);
+        if (input.length != layers.get(0).getSize()) {
+            System.out.println("Wrong input size.");
+            return new String("Error");
         }
-        SimpleMatrix prediction = predict(inputMatrix, false);
-        Double predictionValue = prediction.get(0);
-        if (predictionValue < 0.125d) {
-            return new String("Trivial");
-        } else if (predictionValue < 0.375d) {
-            return new String("Easy");
-        } else if (predictionValue < 0.625d) {
-            return new String("Intermediate");
-        } else if (predictionValue < 0.875d) {
-            return new String("Challenging");
-        } else {
-            return new String("Hard");
+        else {
+            SimpleMatrix inputMatrix = new SimpleMatrix(input.length, 1);
+            for (int i = 0; i < input.length; i++) {
+                inputMatrix.set(i, input[i]);
+            }
+            SimpleMatrix prediction = predict(inputMatrix, false);
+            Double predictionValue = prediction.get(0);
+            if (predictionValue < 0.125d) {
+                return new String("Trivial");
+            } else if (predictionValue < 0.375d) {
+                return new String("Easy");
+            } else if (predictionValue < 0.625d) {
+                return new String("Intermediate");
+            } else if (predictionValue < 0.875d) {
+                return new String("Challenging");
+            } else {
+                return new String("Hard");
+            }
         }
+    
     }
 }

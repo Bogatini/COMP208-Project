@@ -255,7 +255,7 @@ public class Network {
      */
     public String predict(Double[] input) {
         if (input.length != layers.get(0).getSize()) {
-            System.out.println("Wrong input size.");
+            System.out.println("Wrong input size.\nDouble[] of length " + layers.get(0).getSize() + " required. Recieved length " + input.length);
             return new String("Error");
         }
         else {

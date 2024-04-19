@@ -64,7 +64,7 @@ public class MathsGrid extends JFrame {
      */
     public MathsGrid() {
         System.out.println("MathsGrid.java: Instantiating Network.");
-        Network neuralNetworkInterface = new Network("MathsGrid", 10);
+        Network neuralNetworkInterface = new Network("MathsGrid", 9);
         System.out.println("MathsGrid.java: Calling Save().");
         neuralNetworkInterface.save();
         
@@ -101,12 +101,13 @@ public class MathsGrid extends JFrame {
         System.out.println("MathsGrid.java: Training Complete.");
 
         // pause current thread to give the neural network time to train
+        // [no need for this, training already takes the time it needs - huw]
         
-        try {
+        /* try {
             Thread.sleep(trainingTime*1000); // pause for ten seconds (method takes milliseconds)
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } 
+        }  */
 
         // once the training is done, remove the loading screen and continue the code
         loadingPopUp.setVisible(false);

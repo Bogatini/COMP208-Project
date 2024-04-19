@@ -41,25 +41,25 @@ public class Network {
         try {
             networkFile = new File(FOLDER + fileName + ".txt");
             if (networkFile.createNewFile()) {
-                System.out.println("Creating New Network.");
+                System.out.println("Network.java: Creating New Network.");
                 layers.add(new Layer(numberOfInputs));
                 layers.add(new Layer(layers.get(layers.size() - 1), 4));
                 layers.add(new Layer(layers.get(layers.size() - 1), 4));
                 layers.add(new Layer(layers.get(layers.size() - 1), 1));
             } else {
-                System.out.println("Network Save Found.");
+                System.out.println("Network.java: Network Save Found.");
                 Scanner sc = new Scanner(networkFile);
                 List<List<SimpleMatrix>> layerValues = new ArrayList<List<SimpleMatrix>>();
                 while (sc.hasNextLine()) {
                     layerValues.add(Util.decodeSaveString(sc.nextLine()));
                 }
-                System.out.println("Read in " + layerValues.size() + " layers.");
+                System.out.println("Network.java: Read in " + layerValues.size() + " layers.");
                 sc.close();
                 layers.add(new Layer(numberOfInputs));
                 for (int i = 1; i <= layerValues.size(); i++) {
                     layers.add(new Layer(layerValues.get(i-1), layers.get(i-1)));
                 }
-                System.out.println("Created " + layers.size() + " layers.");
+                System.out.println("Network.java: Created " + layers.size() + " layers.");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,11 +73,11 @@ public class Network {
     public void save() {
         try {
             FileWriter wr = new FileWriter(networkFile, false);
-            System.out.println("Network has " + layers.size() + " layers.");
+            System.out.println("Network.java: Network has " + layers.size() + " layers.");
             for (int i = 1; i < layers.size(); i++) {
                 String layerString = Util.encodeSaveString(layers.get(i).getValues());
                 wr.write(layerString + "\n");
-                System.out.println("Wrote to file:\n" + layerString);
+                System.out.println("Network.java: Wrote layer" + i + "to file.");
             }
             wr.close();
             
@@ -150,12 +150,11 @@ public class Network {
             for (int j = 0; j < input.size(); j++) {
                 inputMatrix.set(j, input.get(j));
             }
-            inputMatrix.print();
             data.add(inputMatrix);
             answers.add(new SimpleMatrix(new double[]{outputs.get(i)}));
         }
 
-        System.out.println("Loaded " + data.size() + " training examples, with " + answers.size() + " answers.");
+        System.out.println("Network.java: Loaded " + data.size() + " training examples, with " + answers.size() + " answers.");
 
         Double startTime = (double) (System.nanoTime() / 1000000000l);
         Double currentTime = startTime;
@@ -255,7 +254,7 @@ public class Network {
      */
     public String predict(Double[] input) {
         if (input.length != layers.get(0).getSize()) {
-            System.out.println("Wrong input size.\nDouble[] of length " + layers.get(0).getSize() + " required. Recieved length " + input.length);
+            System.out.println("Network.java: Wrong input size.\nDouble[] of length " + layers.get(0).getSize() + " required. Recieved length " + input.length);
             return new String("Error");
         }
         else {

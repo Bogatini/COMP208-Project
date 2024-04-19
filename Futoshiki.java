@@ -40,7 +40,7 @@ public class Futoshiki{
 	private Timer timer;                         //timer attributes that will be used for training and neural network
 	
 	private long startTime;
-	private long endTIme;
+	private long endTime;
 	private long timeDifference;
 	
 	private Double[] gameAsArray = new Double[8]; 
@@ -51,6 +51,8 @@ public class Futoshiki{
 		
 		System.out.println("Futoshiki.java: Instantiating Network.");
 		Network futoshikiNetwork = new Network("Futoshiki", 8);
+		System.out.println("Futoshiki.java: Calling Save()");
+		futoshikiNetwork.save();
 
 
 		gameFrame = new JFrame("Futoshiki Game");          //instantiates the Jframe attribute

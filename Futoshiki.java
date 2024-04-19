@@ -525,7 +525,7 @@ public class Futoshiki{
 				
 			timer.stop();
 			double timeDifferenceDouble = (double) timeDifference;
-			timeDifferenceDouble = timeDifferenceDouble / 1000;
+			// timeDifferenceDouble = timeDifferenceDouble / 1000; // i think this is already in seconds ? - huw
 			NNInterface.addTrainingData(gameAsArray, timeDifferenceDouble);
 			
 			NNInterface.save();

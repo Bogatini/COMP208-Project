@@ -362,9 +362,9 @@ public class KillerSudoku extends JFrame {
                     timer.stop();
                     double timeTaken = ((System.currentTimeMillis() - startTime) / 1000);
                     puzzleCompleted(timeTaken);
-                    JOptionPane.showMessageDialog(KillerSudokuGameNN.this, "Congratulations! Your solution is correct.");
+                    JOptionPane.showMessageDialog(KillerSudoku.this, "Congratulations! Your solution is correct.");
                 } else {
-                    JOptionPane.showMessageDialog(KillerSudokuGameNN.this,
+                    JOptionPane.showMessageDialog(KillerSudoku.this,
                             "Sorry, your solution is incorrect. Please try again.");
                 }
             }

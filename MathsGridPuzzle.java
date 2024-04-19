@@ -20,7 +20,7 @@ import java.util.Collections;
 public class MathsGridPuzzle extends JFrame {
 
     // Neural Network setup
-    Network neuralNetworkInterface = new Network("MathsGrid", 10);
+    Network neuralNetworkInterface;
 
     /* 
     an empty template for a puzzle grid. ? - POSSIBLE user input (may be filled in as a hint)
@@ -63,6 +63,11 @@ public class MathsGridPuzzle extends JFrame {
      * Constructor that handles creating the grid and the UI element 
      */
     public MathsGridPuzzle() {
+        System.out.println("MathsGridPuzzle.java: Instantiating Network.");
+        Network neuralNetworkInterface= new Network("MathsGrid", 10);
+        System.out.println("MathsGridPuzzle.java: Calling Save.");
+        neuralNetworkInterface.save();
+        
         // set up the window
         setTitle("Maths Grid Puzzle");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -91,8 +96,9 @@ public class MathsGridPuzzle extends JFrame {
         loadingPopUp.setVisible(true);
 
         // allow for training time
-        System.out.println("Training Maths Grid Network");
+        System.out.println("MathsGridPuzzle.java: Calling Train Function.");
         neuralNetworkInterface.train((double) trainingTime);
+        System.out.println("MathsGridPuzzle.java: Training Complete.");
 
         // pause current thread to give the neural network time to train
         

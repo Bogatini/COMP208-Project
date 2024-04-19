@@ -23,6 +23,7 @@ public class KillerSudoku extends JFrame {
     private long startTime;
     private JLabel timerLabel;
     private JLabel difficultyLabel;
+    private final int trainingTime = 60;
 
     private final DottedTextField[][] cells = new DottedTextField[GRID_SIZE][GRID_SIZE];
     private final int[][] grid = new int[GRID_SIZE][GRID_SIZE];
@@ -33,6 +34,19 @@ public class KillerSudoku extends JFrame {
         setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+
+        JDialog loadingPopUp = new JDialog();
+        loadingPopUp.setTitle("Loading...");
+        loadingPopUp.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
+        loadingPopUp.setLocationRelativeTo(null); // place at centre of screen
+        loadingPopUp.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // dont let the user close the window, could mess up training algo
+        loadingPopUp.add(new JLabel("Loading... Please wait.", SwingConstants.CENTER));
+        loadingPopUp.setVisible(true);
+
+        System.out.println("MathsGrid.java: Calling Train()");
+        Network.train((double) trainingTime);
+        System.out.println("MathsGrid.java: Training Complete.");
+        
         JPanel centerPanel = new JPanel(new GridLayout(GRID_SIZE + 1, GRID_SIZE + 1));
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         generateSudoku();
@@ -106,37 +120,25 @@ public class KillerSudoku extends JFrame {
     }
 
     private Color getRandomColor(List<Color> usedColors, List<Point> neighbors) {
-        Color[] pastelColors = {
-                new Color(255, 255, 153), // Pastel yellow
-                new Color(173, 216, 230), // Pastel blue
-                new Color(152, 251, 152), // Pastel green
-                new Color(255, 182, 193), // Pastel pink
-                new Color(221, 160, 221), // Pastel purple
-                new Color(255, 204, 153) // Pastel orange
-        };
         Random random = new Random();
+        Color color;
+        boolean colorUsed;
 
-        // Shuffle the colors to randomize selection
-        List<Color> shuffledColors = Arrays.asList(pastelColors);
-        Collections.shuffle(shuffledColors);
+        do {
+            // Generate random RGB values for pastel colours
+            int red = 170 + random.nextInt(56); 
+            int green = 170 + random.nextInt(56); 
+            int blue = 170 + random.nextInt(56);
 
-        // Iterate over the shuffled colors to find a suitable color
-        for (Color color : shuffledColors) {
-            boolean colorUsed = false;
+            // Create a new color with the generated RGB values
+            color = new Color(red, green, blue);
 
             // Check if the color is already used by neighboring cells or cages
-            if (usedColors.contains(color) || hasSameColorNeighbor(neighbors, color)) {
-                colorUsed = true;
-            }
+            colorUsed = usedColors.contains(color) || hasSameColorNeighbor(neighbors, color);
+        } while (colorUsed);
 
-            // Return the color if it's not used by any neighboring cells
-            if (!colorUsed) {
-                return color;
-            }
-        }
-
-        // If no suitable color is found, choose a random color
-        return pastelColors[random.nextInt(pastelColors.length)];
+        // Return the randomly generated color
+        return color;
     }
 
     private List<Point> getNeighbors(List<Point> cage) {

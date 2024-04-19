@@ -32,7 +32,7 @@ public class KillerSudoku extends JFrame {
     public KillerSudoku() {
         setTitle("Killer Sudoku");
         setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);   // this closes all frames not just the current one so it closes the main menu aswell
         setLayout(new BorderLayout());
 
         System.out.println("KillerSudoku.java: Instantiating Network.");

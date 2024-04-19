@@ -17,8 +17,8 @@ public class MazeDisplay extends JFrame {
         setSize(maze.length * CELL_SIZE, (maze[0].length+1) * CELL_SIZE);
         setLocationRelativeTo(null);
         add(new MazePanel());
-        pack(); // Automatically sizes the frame based on contents
-        setVisible(true); // Make the frame visible
+        setSize(MAZE[0].length * CELL_SIZE, MAZE.length * CELL_SIZE);
+        setVisible(true);
     }
 
     /**
@@ -27,18 +27,23 @@ public class MazeDisplay extends JFrame {
      */
     public void updateMaze(String[][] newMaze) {
         this.MAZE = newMaze;
-        repaint(); // Refresh the display
+        repaint(); // refresh the window
     }
 
     /**
-     * Constructor for a panel in that will be shown in the window
-     * This could be in it's own file, but it is just used to override two methods in JPanel
+     * Constructor for the contents of the window
+     * Is a single panel that can be coloured in. where a wall is in the map, a black rectange is drawn
      */
     class MazePanel extends JPanel {
+
+        public MazePanel(){
+            this.setSize(MAZE[0].length * CELL_SIZE, MAZE.length * CELL_SIZE);
+        }
+
         /**
          * colours every panel in the maze the correct colour, depending on 
          * what symbol is in the position in the 2D array MAZE
-         * @param   g the Graphics object inside the panel that handles how it looks
+         * @param   g the Graphics object inside the panel (the small squares)
          */
         @Override
         protected void paintComponent(Graphics g) {
@@ -61,16 +66,6 @@ public class MazeDisplay extends JFrame {
                     }
                 }
             }
-        }
-
-        /**
-         * ensures that when this function is called, the size of each cell is taken into account
-         * if the normal function is used the grid is tiny as the minimum size for each panel is used
-         * @param   Dimension the height and width of the window 
-         */
-        @Override
-        public Dimension getPreferredSize() {
-            return new Dimension(MAZE[0].length * CELL_SIZE, MAZE.length * CELL_SIZE);
         }
     }
 }

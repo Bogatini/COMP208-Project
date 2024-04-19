@@ -8,7 +8,7 @@ import java.awt.event.MouseEvent;
 public class MazeCreator extends JFrame {
 
     private final int rows;
-    private final int cols;
+    private final int columns;
     private final JButton[][] gridButtons;
     private final int CELL_SIZE = 50;
     private boolean continueFlag = false;
@@ -17,20 +17,20 @@ public class MazeCreator extends JFrame {
     /**
      * Constructor that creates the input window for the user
      * @param   rows number of rows in the grid
-     * @param   cols number of columns in the grid
+     * @param   columns number of columns in the grid
     */
-    public MazeCreator(int rows, int cols) {
+    public MazeCreator(int rows, int columns) {
         this.rows = rows;
-        this.cols = cols;
-        MAZE = new String[rows][cols];
-        gridButtons = new JButton[rows][cols];
+        this.columns = columns;
+        MAZE = new String[rows][columns];
+        gridButtons = new JButton[rows][columns];
 
         setTitle("Maze Creator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLayout(new GridLayout(rows + 1, cols)); // +1 for the print button row - annoyingly this means the print button is a square (cant find a way to make it not stick to the grid payout set in this line)
+        setLayout(new GridLayout(rows + 1, columns)); // +1 for the print button row - annoyingly this means the print button is a square (cant find a way to make it not stick to the grid payout set in this line)
         initializeGrid();
         addPrintButton();
-        setSize(cols * CELL_SIZE, (rows + 1) * CELL_SIZE); // Adjust size based on number of rows and columns
+        setSize(columns * CELL_SIZE, (rows + 1) * CELL_SIZE); // Adjust size based on number of rows and columns
         setLocationRelativeTo(null); // Center the window
         setVisible(true);
     }
@@ -44,7 +44,7 @@ public class MazeCreator extends JFrame {
     */
     private void initializeGrid() {
         for (int y = 0; y < rows; y++) {
-            for (int x = 0; x < cols; x++) {
+            for (int x = 0; x < columns; x++) {
                 MAZE[y][x] = " ";
                 JButton button = new JButton();
                 button.setBackground(Color.WHITE);

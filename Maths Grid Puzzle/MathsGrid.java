@@ -239,9 +239,9 @@ public class MathsGrid extends JFrame {
                     // end the game and timer and add the starting data and time taken to training data array
                     timer.stop();
                     double elapsedTimeDouble = (double) elapsedTime;
-                    double elapsedTimeSecondsDouble = elapsedTimeDouble/1000;
+                    // double elapsedTimeSecondsDouble = elapsedTimeDouble/1000; // don't think this is necessary
                     setNNValues(answerFields);
-                    NNInterface.addTrainingData(NNArray, elapsedTimeSecondsDouble);
+                    NNInterface.addTrainingData(NNArray, elapsedTimeDouble);
 
                     JOptionPane.showMessageDialog(MathsGrid.this, "All equations are correct!\n" + elapsedTime + " seconds taken");
                     dispose(); // this closes the program

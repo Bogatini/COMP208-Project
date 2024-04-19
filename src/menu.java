@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 public class menu extends JFrame {
 
-    JFrame gameWin;
+    JFrame gameWin = new JFrame();
 
     JFrame win = this;
 
@@ -18,6 +18,16 @@ public class menu extends JFrame {
         panel.add(mathsgrid);
         mathsgrid.setPreferredSize(buttonSize);
 
+        JButton sudoku = new JButton("Sudoku");
+        panel.add(sudoku);
+        sudoku.setPreferredSize(buttonSize);
+
+        JButton futoShiki = new JButton("Futoshiki");
+        panel.add(futoShiki);
+        futoShiki.setPreferredSize(buttonSize);
+
+
+
         mathsgrid.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -26,6 +36,26 @@ public class menu extends JFrame {
                 openGame(win, gameWin);
             }
         });
+
+        sudoku.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                win.setVisible(false);
+                gameWin = new KillerSudoku();   // CHANGE THIS LINE *****
+                openGame(win, gameWin);
+            }
+        });
+
+        futoShiki.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                win.setVisible(false);
+                gameWin = new MazeSolver();   // CHANGE THIS LINE *****
+                openGame(win, gameWin);
+            }
+        });
+
+
 
         // you need to add all the buttons for the other games
         //change the button name and the object that is made in them

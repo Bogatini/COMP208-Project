@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 
 public class menu extends JFrame {
 
+    Object newWin;
+
     public menu() {
         Dimension buttonSize = new Dimension(200, 50);
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER,10,5));
@@ -25,6 +27,8 @@ public class menu extends JFrame {
         panel.add(kenken);
         kenken.setPreferredSize(buttonSize);
 
+
+
         JButton mathsgrid = new JButton("Maths Grid");
         panel.add(mathsgrid);
         mathsgrid.setPreferredSize(buttonSize);
@@ -33,12 +37,12 @@ public class menu extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 MathsGrid newWin = new MathsGrid();
+                setVisible(false);
             }
         });
 
-        this.setFocusableWindowState(false);
-        this.toBack();
 
+        
         JButton maze = new JButton("Maze");
         panel.add(maze);
         maze.setPreferredSize(buttonSize);
@@ -51,12 +55,29 @@ public class menu extends JFrame {
         setTitle("Menu");
 
 
+        this.setFocusableWindowState(false);
+        this.toBack();
+
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
+    private void checkGameState(Object a){
+        // a game is running
+        if (a != null) {
+            // hide the menu window
+            setVisible(false);
+        }
+        else {
+            setVisible(true);
+        }
+    }
+
     public static void main(String[] args) {
-        new menu();
+        menu mainMenu = new menu();
+        while (mainMenu != null) {
+            mainMenu.checkGameState(mainMenu.newWin);
+        }
     }
 }

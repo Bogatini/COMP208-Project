@@ -62,10 +62,10 @@ public class MazeSolver {
 
         MazeCreator mazeCreator = new MazeCreator(MAX_ROW+1, MAX_COL+1); // add one as MazeCreator uses the exact number of squares on each axis, while MazeSolver uses index numbers
 
-        // this whole section is badly written - must find a way to pause MazeSolver and wait for MazeCreator to finish
+        // pause this thread while waiting for the user to create their maze
         while (!mazeCreator.getContinueFlag()) {
             try {
-                Thread.sleep(1); // This just pauses the loop for a short duration to avoid consuming CPU resources (is this even true??)
+                Thread.sleep(1);
             } 
             catch (InterruptedException e) {
                 // Do nothing
@@ -98,6 +98,15 @@ public class MazeSolver {
         writeQValues(qValuesFilePath);
 
         writeMazeToFile(mazeFilePath);
+
+        // run the code
+        try {
+            this.solveMaze();
+        }
+        catch (Exception e)  {
+            System.err.println(e.getMessage());
+            System.exit(0);
+        }
     }
 
     /**
@@ -376,15 +385,5 @@ public class MazeSolver {
 
     public static void main(String[] args) {
         MazeSolver mazeSolver = new MazeSolver();
-        try {
-            mazeSolver.solveMaze();
-        }
-        catch (Exception e)  {
-            System.err.println(e.getMessage());
-            System.exit(0);
-        }
     }
 }
-
-
-

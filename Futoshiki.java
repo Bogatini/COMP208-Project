@@ -9,8 +9,7 @@
  */
 
 // import statements  
-import java.awt.*;    
-import java.awt.event.*;
+import java.awt.*;
 import javax.swing.*; 
 import javax.swing.border.*;
 import java.util.Random;
@@ -18,14 +17,10 @@ import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Futoshiki{
+public class Futoshiki extends JFrame{
 	
 	
 	Network futoshikiNetwork;         //creates the network object for futoshiki
-	
-	
-	
-	private JFrame gameFrame;                    //creates an attribute for the game frame
 	
 	private JTextField[][] gameBoxes;            //creates an attribute of a two dimensional array of text fields
 	
@@ -55,14 +50,14 @@ public class Futoshiki{
 		futoshikiNetwork.save();
 
 
-		gameFrame = new JFrame("Futoshiki Game");          //instantiates the Jframe attribute
+		//gameFrame = new JFrame("Futoshiki Game");          //instantiates the Jframe attribute
 		
-		gameFrame.setSize(500, 500);     //sets the frame size
-		gameFrame.setResizable(false);    //so that the size of the frame can't be changed
-		gameFrame.setVisible(false);      //sets the frame to visible
-		gameFrame.setLayout(new BorderLayout());     //sets the frames border layout for easier arrangement of aspects later
-		gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);         //sets the program to close when the 'x' is pressed 
-		gameFrame.setLocationRelativeTo(null);                 //will display the frame in the middle of the screen
+		setSize(500, 500);     //sets the frame size
+		setResizable(false);    //so that the size of the frame can't be changed
+		setVisible(false);      //sets the frame to visible
+		setLayout(new BorderLayout());     //sets the frames border layout for easier arrangement of aspects later
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);         //sets the program to close when the 'x' is pressed 
+		setLocationRelativeTo(null);                 //will display the frame in the middle of the screen
         
 		JPanel spacePanelEast = new JPanel();             //creates a blank panel used for making space	on the left hand side	
 		JPanel spacePanelWest = new JPanel();             //creates a blank panel used for making space	on the right hand side			
@@ -73,13 +68,13 @@ public class Futoshiki{
 		
 		spacePanelEast.setBackground(Color.WHITE); spacePanelWest.setBackground(Color.WHITE); timePanel.setBackground(Color.WHITE); gamePanel.setBackground(Color.WHITE); submitPanel.setBackground(Color.WHITE);   //sets the background for all panels as white
 		
-		gameFrame.add(spacePanelEast, BorderLayout.EAST);     //adds the two blank panels to the frame on their respected sides
-		gameFrame.add(spacePanelWest, BorderLayout.WEST);
+		add(spacePanelEast, BorderLayout.EAST);     //adds the two blank panels to the frame on their respected sides
+		add(spacePanelWest, BorderLayout.WEST);
 		
 		timeLabel = new JLabel("");
 		timeLabel.setHorizontalAlignment(JLabel.CENTER); timeLabel.setVerticalAlignment(JLabel.CENTER);
 		timePanel.add(timeLabel);
-		gameFrame.add(timePanel, BorderLayout.NORTH);          //adds the time panel to the top of the frame.
+		add(timePanel, BorderLayout.NORTH);          //adds the time panel to the top of the frame.
 		
 		gameBoxes = new JTextField[7][7];          		//instantiates the gameboxes attribute as the 7x7 text field array
 		inequalitySigns = new JLabel[7][7];             //instantiates the inequalitySigns attribute with a 7x7 label array
@@ -114,7 +109,7 @@ public class Futoshiki{
 			}
 		}
 		
-		gameFrame.add(gamePanel, BorderLayout.CENTER);     //adds the game panel to the frame in the middle
+		add(gamePanel, BorderLayout.CENTER);     //adds the game panel to the frame in the middle
 		
 		JFrame loadingScreen = new JFrame();
         loadingScreen.setTitle("Loading...");
@@ -136,12 +131,12 @@ public class Futoshiki{
 		loadingScreen.setVisible(false);
 		
 		
-		GridFiller(gameFrame);                             //calls the grid filler method which fills the grid completely
+		GridFiller(this);                             //calls the grid filler method which fills the grid completely
 		
-		GameMaker(gameFrame);                              //calls the game maker method which empties most of the gird, leaving a puzzle
+		GameMaker(this);                              //calls the game maker method which empties most of the gird, leaving a puzzle
 		
 		
-		CreateNetworkArray(gameFrame);
+		CreateNetworkArray(this);
 		
 		startTime = System.currentTimeMillis();
 		
@@ -162,13 +157,13 @@ public class Futoshiki{
 			
 		submitGame = new JButton("SUBMIT");         //instantiates the button attribute with some text
 		
-		submitGame.addActionListener(e -> buttonPressed(gameFrame, futoshikiNetwork));         //lamda expression for action listener of button, calls method
+		submitGame.addActionListener(e -> buttonPressed(this, futoshikiNetwork));         //lamda expression for action listener of button, calls method
 		
 		submitPanel.add(submitGame);                //adds the button to the panel for the button 
 		
-		gameFrame.add(submitPanel, BorderLayout.SOUTH);   //adds the button panel to the bottom of the frame.
+		this.add(submitPanel, BorderLayout.SOUTH);   //adds the button panel to the bottom of the frame.
 		
-		gameFrame.setVisible(true);	                                                          
+		this.setVisible(true);	                                                          
 				
 	}
 	

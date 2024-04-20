@@ -113,7 +113,7 @@ public class menu extends JFrame {
         add(panel, BorderLayout.CENTER);
         setTitle("Menu");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800,500);
+        frame.setSize(800,800);
 
         pack();
         setLocationRelativeTo(null);

@@ -24,7 +24,7 @@ public class menu extends JFrame {
         buttonPanel.add(mathsgrid);
         mathsgrid.setPreferredSize(buttonSize);
 
-        JButton sudoku = new JButton("Killer Sudoku");
+        JButton sudoku = new JButton("Sudoku");
         buttonPanel.add(sudoku);
         sudoku.setPreferredSize(buttonSize);
 
@@ -63,7 +63,7 @@ public class menu extends JFrame {
                gameWin = new Futoshiki();   // CHANGE THIS LINE *****
                openGame(menuWindow, gameWin);
            }
-       });
+        });
         maze.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -76,7 +76,8 @@ public class menu extends JFrame {
                             String[][] mazeData = mazeCreator.getMaze();
                             gameWin = new MazeSolver(mazeData);
                             openGame(menuWindow, gameWin);
-                        } else {
+                        } 
+                        else {
                             menuWindow.setVisible(true);
                         }
                     }
@@ -126,10 +127,10 @@ public class menu extends JFrame {
      * @author Liv Mac with help from Fred M
      */
     private void openGame(JFrame currentWindow, JFrame gameWindow) {
-        gameWin.addWindowListener(new java.awt.event.WindowAdapter() {
+        gameWindow.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-                currentWindow.setVisible(true); // show the menu when the new window is closed
+                currentWindow.setVisible(true);
                 currentWindow.setFocusableWindowState(true);
                 currentWindow.toFront();
             }

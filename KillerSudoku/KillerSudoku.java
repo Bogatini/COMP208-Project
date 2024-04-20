@@ -369,7 +369,7 @@ public class KillerSudoku extends JFrame {
                     double timeTaken = ((System.currentTimeMillis() - startTime) / 1000);
                     puzzleCompleted(timeTaken, neuralNetwork);
                     JOptionPane.showMessageDialog(KillerSudoku.this, "Congratulations! Your solution is correct.");
-                    processWindowEvent(new WindowEvent(KillerSudoku.this, WindowEvent.WINDOW_CLOSING));
+                    processWindowEvent(new WindowEvent(Futoshiki.this, WindowEvent.WINDOW_CLOSING));
                 } else {
                     JOptionPane.showMessageDialog(KillerSudoku.this,
                             "Sorry, your solution is incorrect. Please try again.");

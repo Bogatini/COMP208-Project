@@ -16,6 +16,7 @@ import java.util.Random;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.awt.event.WindowEvent;
 
 public class Futoshiki extends JFrame{
@@ -532,6 +533,7 @@ public class Futoshiki extends JFrame{
                 JOptionPane.INFORMATION_MESSAGE);
 			
 			processWindowEvent(new WindowEvent(Futoshiki.this, WindowEvent.WINDOW_CLOSING));
+			
 		}			
 	}
 

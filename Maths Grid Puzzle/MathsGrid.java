@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Collections;
+import java.awt.event.WindowEvent;
 
 public class MathsGrid extends JFrame {
 
@@ -78,12 +79,14 @@ public class MathsGrid extends JFrame {
         answerGrid = fillGrid(emptyEquationsGrid);
         
         //prints the answers in the terminal
+        /* 
         for (String[] row : emptyEquationsGrid) {
             for (String cell : row) {
                 System.out.print(cell + " ");
             }
             System.out.println();
-        } 
+        }  
+        */
         
         // before starting the game, allow some time for the NN to train
 
@@ -244,6 +247,8 @@ public class MathsGrid extends JFrame {
 
                     JOptionPane.showMessageDialog(MathsGrid.this, "All equations are correct!\n" + elapsedTime + " seconds taken");
                     dispose(); // this closes the program
+                    // fakes closing the window, technically what we do is tell the main menu this window has closed, but just make it invisible and pop it off the stack
+                    processWindowEvent(new WindowEvent(MathsGrid.this, WindowEvent.WINDOW_CLOSING));
                     NNInterface.save();
                 } 
                 else {

@@ -31,7 +31,7 @@ public class design {
 
         // icon image
         JLabel imageLabel = new JLabel();
-        ImageIcon imageIcon = new ImageIcon("gameLogo.png");
+        ImageIcon imageIcon = new ImageIcon("src/gameLogo.png");
         imageLabel.setIcon(imageIcon);
         panel.add(imageLabel, BorderLayout.CENTER);
 

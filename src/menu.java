@@ -24,7 +24,7 @@ public class menu extends JFrame {
         buttonPanel.add(mathsgrid);
         mathsgrid.setPreferredSize(buttonSize);
 
-        JButton sudoku = new JButton("Sudoku");
+        JButton sudoku = new JButton("Killer Sudoku");
         buttonPanel.add(sudoku);
         sudoku.setPreferredSize(buttonSize);
 

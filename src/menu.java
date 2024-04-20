@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 public class menu extends JFrame {
 
     JFrame gameWin = new JFrame();
+    JFrame frame = new JFrame();
 
     JFrame menuWindow = this;
 
@@ -92,10 +93,31 @@ public class menu extends JFrame {
             }
         });
 
+        JLabel mathsLogo = new JLabel();
+        ImageIcon mathsImage = new ImageIcon("mathsImage.png");
+        mathsLogo.setIcon(mathsImage );
+        panel.add(mathsLogo);
+
+        JLabel sudokuLogo = new JLabel();
+        ImageIcon sudokuImage = new ImageIcon("sudokuImage.png");
+        sudokuLogo.setIcon(sudokuImage);
+        panel.add(sudokuLogo);
+
+        JLabel futoshikiLogo = new JLabel();
+        ImageIcon futoshikiImage = new ImageIcon("futoshikiImage.png");
+        futoshikiLogo.setIcon(futoshikiImage);
+        panel.add(futoshikiLogo);
+
+        JLabel mazeLogo = new JLabel();
+        ImageIcon mazeImage = new ImageIcon("mazeImage.png");
+        mazeLogo.setIcon(mazeImage);
+        panel.add(mazeLogo);
+
         panel.setBackground(Color.BLACK);
         add(panel, BorderLayout.CENTER);
         setTitle("Menu");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800,500);
 
         pack();
         setLocationRelativeTo(null);

@@ -38,7 +38,7 @@ public class design {
         panel.setBackground(Color.BLACK);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("Home Page");
-        frame.setSize(800,500);
+        frame.setSize(800,800);
         frame.add(panel,BorderLayout.CENTER);
         frame.setVisible(true);
     }

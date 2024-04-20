@@ -30,9 +30,10 @@ public class design {
         });
 
         // icon image
-        ImageIcon imageIcon = new ImageIcon("C:\\Users\\oliviamcdonald\\Downloads\\image.png");
-        JLabel imageLabel = new JLabel(imageIcon);
-        panel.add(imageLabel);
+        JLabel imageLabel = new JLabel();
+        ImageIcon imageIcon = new ImageIcon("gameLogo.png");
+        imageLabel.setIcon(imageIcon);
+        panel.add(imageLabel, BorderLayout.CENTER);
 
         panel.setBackground(Color.BLACK);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

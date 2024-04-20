@@ -1,7 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.JLabel;
+import javax. swing. ImageIcon;
 
 public class menu extends JFrame {
 
@@ -12,56 +12,60 @@ public class menu extends JFrame {
 
     public menu() {
         Dimension buttonSize = new Dimension(200, 50);
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER,10,5));
+        JPanel panel = new JPanel(new BorderLayout());
+        JPanel buttonPanel = new JPanel();
+        JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER,10,5));
+        imagePanel.setPreferredSize(new Dimension(800, 200));
 
         // Buttons
         JButton mathsgrid = new JButton("Maths Grid");
-        panel.add(mathsgrid);
+        buttonPanel.add(mathsgrid);
         mathsgrid.setPreferredSize(buttonSize);
 
         JButton sudoku = new JButton("Sudoku");
-        panel.add(sudoku);
+        buttonPanel.add(sudoku);
         sudoku.setPreferredSize(buttonSize);
 
         JButton futoshiki = new JButton("Futoshiki");
-        panel.add(futoshiki);
+        buttonPanel.add(futoshiki);
         futoshiki.setPreferredSize(buttonSize);
 
         JButton maze = new JButton("Maze");
-        panel.add(maze);
+        buttonPanel.add(maze);
         maze.setPreferredSize(buttonSize);
-
 
 
         mathsgrid.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+           public void actionPerformed(ActionEvent e) {
                 menuWindow.setVisible(false);
                 gameWin = new MathsGrid();   // CHANGE THIS LINE *****
-                openGame(menuWindow, gameWin);
-            }
+               openGame(menuWindow, gameWin);
+           }
         });
 
         sudoku.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                menuWindow.setVisible(false);
-                gameWin = new KillerSudoku();   // CHANGE THIS LINE *****
-                openGame(menuWindow, gameWin);
+               menuWindow.setVisible(false);
+              gameWin = new KillerSudoku();   // CHANGE THIS LINE *****
+            openGame(menuWindow, gameWin);
             }
         });
+
 
         futoshiki.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+           public void actionPerformed(ActionEvent e) {
                 menuWindow.setVisible(false);
-                gameWin = new Futoshiki();   // CHANGE THIS LINE *****
-                openGame(menuWindow, gameWin);
-            }
-        });
+               gameWin = new Futoshiki();   // CHANGE THIS LINE *****
+               openGame(menuWindow, gameWin);
+           }
+       });
+    spaghetti code from fred
+    beacuse two windows are created, two windowListeners must be created, one inside the other
 
-        // spaghetti code from fred
-        // beacuse two windows are created, two windowListeners must be created, one inside the other
+
         maze.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -75,7 +79,7 @@ public class menu extends JFrame {
                         if (mazeCreator.getContinueFlag()) {
                             String[][] mazeData = mazeCreator.getMaze();
                             gameWin = new MazeSolver(mazeData); // second step, solve the maze
-                                                                // pass maze data to MazeSolver
+                            // pass maze data to MazeSolver
                             gameWin.addWindowListener(new java.awt.event.WindowAdapter() {
                                 @Override
                                 public void windowClosed(java.awt.event.WindowEvent windowEvent) {
@@ -84,7 +88,7 @@ public class menu extends JFrame {
                             });
 
                             openGame(menuWindow, gameWin);
-                        } 
+                        }
                         else {
                             menuWindow.setVisible(true); // if the user didn't finish creating the maze (e.g. closed the window didnt press done), show the menu again
                         }
@@ -92,30 +96,33 @@ public class menu extends JFrame {
                 });
             }
         });
-        
-    // icon images that represent the games
-        
+
+
+
+        // icon images that represent the games
         JLabel mathsLogo = new JLabel();
         ImageIcon mathsImage = new ImageIcon("mathsImage.png");
         mathsLogo.setIcon(mathsImage );
-        panel.add(mathsLogo);
+        imagePanel.add(mathsLogo);
 
         JLabel sudokuLogo = new JLabel();
         ImageIcon sudokuImage = new ImageIcon("sudokuImage.png");
         sudokuLogo.setIcon(sudokuImage);
-        panel.add(sudokuLogo);
+        imagePanel.add(sudokuLogo);
 
         JLabel futoshikiLogo = new JLabel();
         ImageIcon futoshikiImage = new ImageIcon("futoshikiImage.png");
         futoshikiLogo.setIcon(futoshikiImage);
-        panel.add(futoshikiLogo);
+        imagePanel.add(futoshikiLogo);
 
         JLabel mazeLogo = new JLabel();
         ImageIcon mazeImage = new ImageIcon("mazeImage.png");
         mazeLogo.setIcon(mazeImage);
-        panel.add(mazeLogo);
+        imagePanel.add(mazeLogo);
 
-        panel.setBackground(Color.BLACK);
+
+        panel.add(buttonPanel, BorderLayout.NORTH);
+        panel.add(imagePanel, BorderLayout.CENTER);
         add(panel, BorderLayout.CENTER);
         setTitle("Menu");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -128,7 +135,7 @@ public class menu extends JFrame {
 
     /**
      * this maybe isnt the best name for this method, what it does is adds a listener that is triggered when the gameWindow is closed that reneables currentWindow
-     * 
+     *
      * @param currentWindow
      * @author Liv Mac with help from Fred M
      */

@@ -16,6 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService; // used
 import java.util.concurrent.Executors;
+import java.awt.event.WindowEvent;
 
 public class MazeSolver extends JFrame {
     private static final int NUM_EPISODES = 10000; // i chose a random big number - the bigger this number the better the path will be
@@ -366,6 +367,7 @@ public class MazeSolver extends JFrame {
         this.setVisible(false);
         mazeDisplay.setVisible(false);
         this.dispose();
+        processWindowEvent(new WindowEvent(MazeSolver.this, WindowEvent.WINDOW_CLOSING));
 
     }
 

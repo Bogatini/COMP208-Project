@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 
 public class MazeCreator extends JFrame {
 
@@ -114,6 +115,7 @@ public class MazeCreator extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 continueFlag = true;
                 dispose(); // close the window
+                processWindowEvent(new WindowEvent(MazeCreator.this, WindowEvent.WINDOW_CLOSING));
             }
         });
         add(printButton, gridSettings);

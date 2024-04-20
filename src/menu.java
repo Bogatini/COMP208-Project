@@ -93,17 +93,17 @@ public class menu extends JFrame {
         imagePanel.add(mathsLogo);
 
         JLabel sudokuLogo = new JLabel();
-        ImageIcon sudokuImage = new ImageIcon("sudokuImage.png");
+        ImageIcon sudokuImage = new ImageIcon("src/sudokuImage.png");
         sudokuLogo.setIcon(sudokuImage);
         imagePanel.add(sudokuLogo);
 
         JLabel futoshikiLogo = new JLabel();
-        ImageIcon futoshikiImage = new ImageIcon("futoshikiImage.png");
+        ImageIcon futoshikiImage = new ImageIcon("src/futoshikiImage.png");
         futoshikiLogo.setIcon(futoshikiImage);
         imagePanel.add(futoshikiLogo);
 
         JLabel mazeLogo = new JLabel();
-        ImageIcon mazeImage = new ImageIcon("mazeImage.png");
+        ImageIcon mazeImage = new ImageIcon("src/mazeImage.png");
         mazeLogo.setIcon(mazeImage);
         imagePanel.add(mazeLogo);
 

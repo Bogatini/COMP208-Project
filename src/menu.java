@@ -62,41 +62,25 @@ public class menu extends JFrame {
                openGame(menuWindow, gameWin);
            }
        });
-    spaghetti code from fred
-    beacuse two windows are created, two windowListeners must be created, one inside the other
-
-
         maze.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                menuWindow.setVisible(false);
                 MazeCreator mazeCreator = new MazeCreator(15, 15);
-                mazeCreator.setVisible(true); // first step, create the maze
-
+                mazeCreator.setVisible(true);
                 mazeCreator.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
-                    public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+                    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
                         if (mazeCreator.getContinueFlag()) {
                             String[][] mazeData = mazeCreator.getMaze();
-                            gameWin = new MazeSolver(mazeData); // second step, solve the maze
-                            // pass maze data to MazeSolver
-                            gameWin.addWindowListener(new java.awt.event.WindowAdapter() {
-                                @Override
-                                public void windowClosed(java.awt.event.WindowEvent windowEvent) {
-                                    menuWindow.setVisible(true);
-                                }
-                            });
-
+                            gameWin = new MazeSolver(mazeData);
                             openGame(menuWindow, gameWin);
-                        }
-                        else {
-                            menuWindow.setVisible(true); // if the user didn't finish creating the maze (e.g. closed the window didnt press done), show the menu again
+                        } else {
+                            menuWindow.setVisible(true);
                         }
                     }
                 });
             }
         });
-
 
 
         // icon images that represent the games

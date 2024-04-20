@@ -17,14 +17,14 @@ public class menu extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         JPanel buttonPanel = new JPanel();
         JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER,10,5));
-        imagePanel.setPreferredSize(new Dimension(800, 200));
+        imagePanel.setPreferredSize(new Dimension(1200, 400));
 
         // Buttons
         JButton mathsgrid = new JButton("Maths Grid");
         buttonPanel.add(mathsgrid);
         mathsgrid.setPreferredSize(buttonSize);
 
-        JButton sudoku = new JButton("Sudoku");
+        JButton sudoku = new JButton("Killer Sudoku");
         buttonPanel.add(sudoku);
         sudoku.setPreferredSize(buttonSize);
 

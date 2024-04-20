@@ -92,7 +92,9 @@ public class menu extends JFrame {
                 });
             }
         });
-
+        
+    // icon images that represent the games
+        
         JLabel mathsLogo = new JLabel();
         ImageIcon mathsImage = new ImageIcon("mathsImage.png");
         mathsLogo.setIcon(mathsImage );

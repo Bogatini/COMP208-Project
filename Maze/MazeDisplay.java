@@ -40,8 +40,12 @@ public class MazeDisplay extends JFrame {
         }
 
         /**
-         * colours every panel in the maze the correct colour, depending on 
-         * what symbol is in the position in the 2D array MAZE
+         * colours every panel in the maze, the colour is dependant on 
+         * what symbol is in the panel's position in the 2D array MAZE
+         * 
+         * This function is called internally in many JPanel methods
+         * The important one for us is repaint() 
+         * 
          * @param   g the Graphics object inside the panel (the small squares)
          */
         @Override
@@ -53,7 +57,7 @@ public class MazeDisplay extends JFrame {
                     // this uses the old characters left over from when the maze was origionally text based. these can be switched out for any characters BUT MAKE SURE TO UPDATE OTHER FILES ACCORDINGLY
                     if (MAZE[i][j].equals("W")) {
                         g.setColor(Color.BLACK);
-                        g.fillRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE); // place a coloured square at the position of the old buttons. IF BUTTONS CHANGE SIZE, CHANGE CELL_SIZE
+                        g.fillRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE); // place a coloured square at the position of the old buttons
                     } 
                     else if (MAZE[i][j].equals("P")) {
                         g.setColor(Color.RED);

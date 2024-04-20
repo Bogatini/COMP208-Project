@@ -83,7 +83,8 @@ public class MazeSolver extends JFrame {
         // show the maze being solved
         try {
             this.solveMazeInBackground();
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             System.err.println(e.getMessage());
             System.exit(0);
         }
@@ -375,7 +376,8 @@ public class MazeSolver extends JFrame {
         executor.execute(() -> {
             try {
                 solveMaze();
-            } catch (Exception e) {
+            } 
+            catch (Exception e) {
                 System.err.println(e.getMessage());
                 System.exit(0);
             }
@@ -385,10 +387,5 @@ public class MazeSolver extends JFrame {
 
     public String[][] getMaze(){
         return MAZE;
-    }
-
-    public static void main(String[] args) {
-        MazeCreator mazeCreator = new MazeCreator(15, 15);
-        MazeSolver mazeSolver = new MazeSolver(mazeCreator.getMaze());
     }
 }

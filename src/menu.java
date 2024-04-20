@@ -67,7 +67,10 @@ public class menu extends JFrame {
         maze.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                menuWindow.setVisible(false);
                 MazeCreator mazeCreator = new MazeCreator(15, 15);
+                openGame(menuWindow, mazeCreator);
+                
                 mazeCreator.setVisible(true);
                 mazeCreator.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override

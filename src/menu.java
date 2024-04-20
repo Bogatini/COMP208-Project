@@ -88,7 +88,7 @@ public class menu extends JFrame {
 
         // icon images that represent the games
         JLabel mathsLogo = new JLabel();
-        ImageIcon mathsImage = new ImageIcon("mathsImage.png");
+        ImageIcon mathsImage = new ImageIcon("src/mathsImage.png");
         mathsLogo.setIcon(mathsImage );
         imagePanel.add(mathsLogo);
 

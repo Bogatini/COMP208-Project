@@ -108,7 +108,7 @@ public class MazeCreator extends JFrame {
         gridSettings.gridwidth = columns; // Make the button span all columns
         gridSettings.gridx = 0;
         gridSettings.gridy = rows; // Place the button on the row below the grid
-        JButton printButton = new JButton("Done");
+        JButton printButton = new JButton("Finish Maze");
         printButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
